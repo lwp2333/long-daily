@@ -1,0 +1,31 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "long-daily",
+  "description": "long-daily",
+  "appid": "wx309dd32cd22f2105",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "compileHotReLoad": false,
+    "postcss": true,
+    "minified": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "uglifyFileName": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.28.0",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "condition": {},
+  "editorSetting": {
+    "tabIndent": "auto",
+    "tabSize": 4
+  }
+}
