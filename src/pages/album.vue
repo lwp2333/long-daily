@@ -3,53 +3,26 @@
     <nut-grid :border="false">
       <nut-grid-item>
         <div class="card">
-          <div class="cover add_box" @click="handleOpenCreate">
+          <div class="cover add_box" @click="navCreate">
             <IconFont name="image" :size="32" color="#2c68ff" />
             新建相册
           </div>
         </div>
       </nut-grid-item>
       <nut-grid-item v-for="item in albumList" :key="item.id">
-        <div class="card">
-          <image :src="item.coverUrl" class="cover" />
+        <div class="card" @click="navDetail">
+          <image :src="item.coverUrl" mode="aspectFill" class="cover" />
           <div class="name">{{ item.name }}</div>
           <div class="info">{{ item.count }}张</div>
         </div>
       </nut-grid-item>
     </nut-grid>
   </div>
-
-  <nut-popup
-    v-model:visible="createState.show"
-    :close-on-click-overlay="false"
-    position="bottom"
-    closeable
-    round
-    :style="{ height: '32vh' }"
-  >
-    <div class="content">
-      <nut-form>
-        <nut-form-item>
-          <nut-input
-            v-model="createState.name"
-            type="text"
-            :max-length="6"
-            show-word-limit
-            class="nut-input-text"
-            placeholder="填写相册名称"
-          />
-        </nut-form-item>
-      </nut-form>
-      <div class="action">
-        <nut-button block size="small" type="info">确定</nut-button>
-      </div>
-    </div>
-  </nut-popup>
 </template>
 
 <script lang="ts" setup>
 import { IconFont } from '@nutui/icons-vue-taro'
-import { reactive } from 'vue'
+import Taro from '@tarojs/taro'
 
 interface AlbumItem {
   id: number
@@ -79,13 +52,16 @@ const albumList: AlbumItem[] = [
   }
 ]
 
-const createState = reactive({
-  name: '',
-  tag: '',
-  show: false
-})
-const handleOpenCreate = () => {
-  createState.show = true
+const navCreate = () => {
+  Taro.navigateTo({
+    url: '/pages/album-create'
+  })
+}
+
+const navDetail = () => {
+  Taro.navigateTo({
+    url: '/pages/album-detail'
+  })
 }
 </script>
 <style lang="scss">

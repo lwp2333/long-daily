@@ -1,5 +1,15 @@
 export default defineAppConfig({
-  pages: ['pages/index', 'pages/upload', 'pages/my', 'pages/album','pages/album-detail', 'pages/edit-userInfo'],
+  pages: [
+    'pages/splash',
+    'pages/index',
+    'pages/time-machine',
+    'pages/upload',
+    'pages/album',
+    'pages/album-create',
+    'pages/album-detail',
+    'pages/my',
+    'pages/edit-userInfo'
+  ],
   tabBar: {
     color: '#000',
     selectedColor: '#66a6ff',
@@ -7,15 +17,15 @@ export default defineAppConfig({
     list: [
       {
         pagePath: 'pages/index',
-        text: '动态',
-        iconPath: './static/icon/icon_gray.png',
-        selectedIconPath: './static/icon/icon.png'
-      },
-      {
-        pagePath: 'pages/album',
-        text: '相册',
+        text: '首页',
         iconPath: './static/icon/icon2_gray.png',
         selectedIconPath: './static/icon/icon2.png'
+      },
+      {
+        pagePath: 'pages/time-machine',
+        text: '时光机',
+        iconPath: './static/icon/icon_gray.png',
+        selectedIconPath: './static/icon/icon.png'
       },
       {
         pagePath: 'pages/my',

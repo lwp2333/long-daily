@@ -1,194 +1,139 @@
 <template>
-  <div class="indexPage">
-    <nut-swiper :init-page="swiperState.page" :pagination-visible="true" pagination-color="#426543" auto-play="3000">
-      <nut-swiper-item v-for="item in swiperState.bannerList" :key="item">
-        <img class="banner" :src="item" />
-      </nut-swiper-item>
-    </nut-swiper>
-    <div class="content">
-      <div class="plog-card" v-for="item in [1, 2, 3, 4]" :key="item">
-        <div class="top">
-          <nut-avatar size="32">
-            <img src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/chun.png" />
-          </nut-avatar>
-          <div class="infoBox">
-            <div class="name">五边形的男人</div>
-            <div class="time">2022-12-06 17:32</div>
-          </div>
-          <IconFont name="more-s" :size="18" @click="openAction" />
-        </div>
-        <div class="middle">
-          该生学习态度端正,学习认真,已经过国家英语四级,有较强的思维本事和动手本事。吃苦耐劳朴实大方,
-          思想上要求提高,进取向党组织靠拢,学习勤奋努力喜欢体育运...
-        </div>
-        <div class="asset">
-          <nut-grid :gutter="0" :column-num="3" :border="false">
-            <nut-grid-item v-for="(item, index) in imgList" :key="index" @click="openPreview(imgList, index)">
-              <img class="mini_pic" :src="item" />
-            </nut-grid-item>
-          </nut-grid>
-        </div>
+  <div class="index-page">
+    <div class="user-info">
+      <image class="avatar" mode="aspectFill" src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/chun.png" />
+      <div class="desc">
+        <span class="label">入驻已经</span>
+        <span class="days-num">
+          132
+          <span class="unit">天</span>
+        </span>
       </div>
     </div>
-  </div>
-  <nut-action-sheet
-    v-model:visible="actionState.show"
-    :menu-items="(actionState.menuItems as any)"
-    cancel-txt="取消"
-    @choose="selected"
-  >
-  </nut-action-sheet>
 
-  <nut-popup v-model:visible="recordState.show" pop-class="popclass" position="bottom" :z-index="1000">
-    <recordCard />
-  </nut-popup>
+    <div class="app-list">
+      <div class="app-item" style="margin-bottom: -12px;">
+        <svgIcon name="tupian" :size="36" />
+        <div class="name">相册</div>
+        <div class="desc">5个</div>
+      </div>
+      <div class="app-item" style="margin-bottom: 12px;">
+        <svgIcon name="rili" :size="36" />
+        <div class="name">纪念日</div>
+        <div class="desc">8个</div>
+      </div>
+      <div class="app-item" style="margin-bottom: -12px;">
+        <svgIcon name="list" :size="36" />
+        <div class="name">人生清单</div>
+        <div class="desc">12个</div>
+      </div>
+    </div>
+
+    <div class="bottom-round"></div>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import { IconFont } from '@nutui/icons-vue-taro'
-import recordCard from '@/components/recordCard.vue'
-import Taro from '@tarojs/taro'
-import { onMounted, reactive, ref } from 'vue'
-// import useSvg from '@/hooks/useSvg'
-interface SwiperState {
-  page: number
-  bannerList: string[]
-}
-const swiperState = reactive<SwiperState>({
-  page: 1,
-  bannerList: [] as string[]
-})
-onMounted(() => {
-  setTimeout(() => {
-    swiperState.bannerList = [
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner1.jpg',
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner2.jpg',
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner3.jpg'
-    ]
-  }, 320)
-})
-
-// const uploadIcon = useSvg('upload')
-// const picIcon = useSvg('icon10')
-// const switchIcon = useSvg('switch')
-// const recordIcon = useSvg('record')
-
-const imgList = ref([
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky1.webp?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky2.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky3.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky4.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky5.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky8.jpg?x-oss-process=style/images_convert'
-])
-
-const openPreview = (images: string[], index: number) => {
-  const urls = images.map(it => it.replace('?x-oss-process=style/images_convert', ''))
-  Taro.previewImage({
-    current: urls[index],
-    urls
-  })
-}
-
-const actionState = reactive({
-  show: false,
-  menuItems: [
-    {
-      id: 'Edit',
-      name: '编辑'
-    },
-    {
-      id: 'Del',
-      name: '删除',
-      color: 'red'
-    }
-  ]
-})
-
-const openAction = () => {
-  actionState.show = true
-}
-
-const selected = (item: unknown) => {
-  console.log(item)
-  Taro.vibrateLong()
-}
-
-const recordState = reactive({
-  show: false
-})
-</script>
+<script lang="ts" setup></script>
 <style lang="scss">
-.indexPage {
-  padding-top: 4px;
+.index-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #f6f7f8;
+  background-image: linear-gradient(to top, #b8cbb8 0%, #b8cbb8 0%, #b465da 0%, #cf6cc9 33%, #ee609c 66%, #ee609c 100%);
+  padding-top: calc(48px + env(safe-area-inset-top));
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 
-.nut-swiper-item {
-  text-align: center;
-  background-color: #fff;
-}
+.user-info {
+  position: fixed;
+  width: 48vw;
+  height: 72px;
+  padding-left: 12px;
+  padding-right: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(16px);
+  border-top-right-radius: 36px;
+  border-bottom-right-radius: 36px;
 
-.banner {
-  width: calc(100% - 8px);
-  height: 172px;
-  border-radius: 12px;
-  object-fit: contain;
-}
-.content {
-  padding: 8px;
-  width: 100%;
-}
-
-.plog-card {
-  width: 100%;
-  // min-height: 220px;
-  padding: 12px;
-  border-radius: 12px;
-  background-color: #fff;
-  &:not(:last-child) {
-    margin-bottom: 12px;
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid #ee609c;
   }
-  .top {
+  .desc {
+    flex: 1;
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
     align-items: center;
-    .infoBox {
-      flex: 1;
-      margin-left: 8px;
-      .name {
-        font-size: 13px;
-        font-weight: 500;
-        color: #000;
-      }
-      .time {
-        font-size: 11px;
-        color: rgba(0, 0, 0, 0.4);
+    .label {
+      font-size: 14px;
+      color: #222;
+    }
+    .days-num {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+      .unit {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 400;
       }
     }
   }
-  .middle {
-    margin-top: 12px;
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.6);
+}
+
+.app-list {
+  position: fixed;
+  left: 0;
+  bottom: 12px;
+  width: 100vw;
+  height: 100px;
+  z-index: 999;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  .app-item {
+    width: 96px;
+    height: 96px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &:not(:last-child) {
+      margin-right: 16px;
+    }
+    .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+    }
+
+    .name {
+      font-size: 14px;
+      font-weight: 400;
+      color: #000;
+    }
+    .desc {
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.54);
+    }
   }
 }
 
-.mini_pic {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 2px;
-}
-.nut-grid-item__content {
-  padding: 2px;
-}
-
-.popclass {
-  padding-bottom: 36px;
+.bottom-round {
+  position: fixed;
+  left: -50vw;
+  bottom: -186vw;
+  width: 200vw;
+  height: auto;
+  aspect-ratio: 1;
+  background-color: #fff;
+  border-radius: 72%;
 }
 </style>

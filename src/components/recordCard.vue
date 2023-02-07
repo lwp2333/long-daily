@@ -49,7 +49,7 @@ RecordManager.onStop(res => {
 // 开始录音
 const start = () => {
   RecordManager.start({
-    format: 'wav',
+    format: 'wav'
   })
 }
 // 暂停录音

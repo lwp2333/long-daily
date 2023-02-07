@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '上传'
+  navigationBarTitleText: '新增时刻'
 })

@@ -1,26 +1,35 @@
 <template>
   <div class="uploadPage">
-    <nut-textarea v-model="formModel.content" placeholder="为你的照片加点描述吧！" />
+    <nut-textarea v-model="formModel.content" limit-show :max-length="120" placeholder="记下此刻的欢喜～" />
     <nut-cell-group>
       <nut-cell title="上传到">
         <template v-slot:link>
-          <span class="gray_text"> xxx相册 </span>
-          <IconFont name="right" color="#ccc" />
+          <div class="cell-right">
+            <image
+              class="mini-cover"
+              src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky4.jpg?x-oss-process=style/images_convert"
+              mode="aspectFill"
+            />
+            <span class="gray-text">默认相册</span>
+            <IconFont name="right" color="#ccc" />
+          </div>
         </template>
       </nut-cell>
     </nut-cell-group>
-
-    <div class="submit">
-      <nut-button type="primary" block @click="selectFile"> 选择文件 </nut-button>
-      <nut-button type="primary" block @click="startSave"> 保存 </nut-button>
+    <div class="upload-box">
+      <div class="add">
+        <IconFont name="image" :size="20" />
+      </div>
     </div>
+    <div class="action"><nut-button block type="info">发布</nut-button></div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 interface FormModel {
   content: string
@@ -86,27 +95,53 @@ const startSave = () => {
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 
-.gray_text {
-  color: #ccc;
+.gray-text {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.4);
 }
 
-.uploader-card {
-  padding: 10px 0px 10px 10px;
-  background-color: #fff;
-  min-height: 220px;
+.nut-cell__title {
+  justify-content: center;
 }
-
-.submit {
-  margin-top: 32px;
+.cell-right {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 64px;
 }
 
-.nut-uploader__upload,
-.nut-uploader__preview-img {
-  width: calc((100vw - 58px) / 4);
-  height: calc((100vw - 58px) / 4);
+.mini-cover {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+.upload-box {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #fff;
+  .add {
+    width: calc((100vw - 36px) / 3);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background-color: #f6f7f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:not(:last-child) {
+      margin-right: 2px;
+    }
+  }
+}
+
+.action {
+  position: fixed;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  background-color: #fff;
+  padding: 16px 12vw;
 }
 </style>
