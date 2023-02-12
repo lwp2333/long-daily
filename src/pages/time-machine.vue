@@ -49,7 +49,7 @@ import { IconFont } from '@nutui/icons-vue-taro'
 import recordCard from '@/components/recordCard.vue'
 import Taro from '@tarojs/taro'
 import { onMounted, reactive, ref } from 'vue'
-// import useSvg from '@/hooks/useSvg'
+// import useAsset from '@/hooks/useAsset'
 interface SwiperState {
   page: number
   bannerList: string[]
@@ -68,10 +68,10 @@ onMounted(() => {
   }, 320)
 })
 
-// const uploadIcon = useSvg('upload')
-// const picIcon = useSvg('icon10')
-// const switchIcon = useSvg('switch')
-// const recordIcon = useSvg('record')
+// const uploadIcon = useAsset('upload')
+// const picIcon = useAsset('icon10')
+// const switchIcon = useAsset('switch')
+// const recordIcon = useAsset('record')
 
 const imgList = ref([
   'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky1.webp?x-oss-process=style/images_convert',

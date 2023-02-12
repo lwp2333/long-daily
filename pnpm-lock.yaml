@@ -36,6 +36,7 @@ specifiers:
   path: ^0.12.7
   pinia: ^2.0.30
   prettier: ^2.8.3
+  solarlunar: ^2.0.7
   style-loader: 3.3.1
   stylelint: 14.16.1
   taro-plugin-pinia: ^1.0.0
@@ -66,6 +67,7 @@ dependencies:
   '@tarojs/taro-h5': 3.5.12_vue@3.2.45
   dayjs: 1.11.7
   pinia: 2.0.30_2hxmazfbcwwtly5fgw7ckvmlau
+  solarlunar: 2.0.7
   taro-plugin-pinia: 1.0.0
   vue: 3.2.45
 
@@ -11401,6 +11403,10 @@ packages:
       uuid: 8.3.2
       websocket-driver: 0.7.4
     dev: true
+
+  /solarlunar/2.0.7:
+    resolution: {integrity: sha512-2SfuCCgAAxFU5MTMYuKGbRgRLcPTJQf3azMEw/GmBpHXA7N2eAQJStSqktZJjnq4qRCboBPnqEB866+PCregag==}
+    dev: false
 
   /sort-keys-length/1.0.1:
     resolution: {integrity: sha512-GRbEOUqCxemTAk/b32F2xa8wDTs+Z1QHOkbhJDQTvv/6G3ZkbJ+frYWsTcc7cBB3Fu4wy4XlLCuNtJuMn7Gsvw==}

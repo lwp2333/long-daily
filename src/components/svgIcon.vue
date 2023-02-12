@@ -4,8 +4,8 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from 'vue'
-import Taro from '@tarojs/taro'
-import useSvg from '@/hooks/useSvg'
+import Taro, { ENV_TYPE } from '@tarojs/taro'
+import useAsset from '@/hooks/useAsset'
 
 interface Props {
   name: string
@@ -16,7 +16,10 @@ const props = defineProps<Props>()
 const emit = defineEmits(['click'])
 
 const { name, size } = toRefs(props)
-const src = useSvg(name)
+const src = useAsset(name)
 
-const sizeFormat = computed(() => `${Taro.pxTransform(size.value)}`)
+const sizeFormat = computed(() => {
+  if (Taro.getEnv() === ENV_TYPE.WEAPP) return `${Taro.pxTransform(size.value)}`
+  return size.value
+})
 </script>

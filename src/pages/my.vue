@@ -3,11 +3,11 @@
     <div class="header">
       <div class="top">
         <nut-avatar size="48">
-          <img src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/chun.png" />
+          <img :src="userInfo.avatar" />
         </nut-avatar>
         <div class="right">
-          <div class="nickName">五边形的男人</div>
-          <div class="signature">集中一点 登峰造极!</div>
+          <div class="nickName">{{ userInfo.nickName }}</div>
+          <div class="signature">{{ userInfo.signature }}</div>
         </div>
       </div>
       <div class="bottom">
@@ -34,8 +34,14 @@
 </template>
 
 <script lang="ts" setup>
+import { useUserInfoStore } from '@/store/userInfo'
 import Taro from '@tarojs/taro'
+import { computed } from 'vue'
 // import { IconFont } from '@nutui/icons-vue-taro'
+
+const userStore = useUserInfoStore()
+
+const userInfo = computed(() => userStore.$state)
 
 const handleNav = (url: string) => {
   Taro.navigateTo({

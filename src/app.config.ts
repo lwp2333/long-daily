@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/splash',
     'pages/index',
     'pages/time-machine',
+    'pages/memorial-day',
     'pages/upload',
     'pages/album',
     'pages/album-create',
