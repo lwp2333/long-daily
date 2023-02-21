@@ -4,7 +4,7 @@
       <span class="name">她的生日</span>
       <text class="big-num">
         <text class="unit">还有</text>
-        262
+        250
         <text class="unit">天</text>
       </text>
       <span class="desc"> 目标日：2023年10月29日 </span>
@@ -14,7 +14,7 @@
     <div class="day-item">
       <svgIcon name="shengri" :size="32" />
       <span class="name">我的生日还有</span>
-      <span class="num">322天</span>
+      <span class="num">310天</span>
     </div>
     <div class="day-item">
       <svgIcon name="love" :size="32" />

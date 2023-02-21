@@ -2,17 +2,18 @@
   <nut-popup
     title="添加纪念日"
     :visible="show"
-    :style="{ height: '48vh' }"
+    :style="{ height: '52vh' }"
     :lock-scroll="true"
     closeable
     round
     position="bottom"
+    @clickCloseIcon="hanldeClose"
   >
     <div class="content">
       <div class="form-item">
         <div class="control">
           <nut-input
-            v-model="createState.name"
+            v-model="formModel.name"
             type="text"
             :max-length="8"
             show-word-limit
@@ -25,42 +26,36 @@
       <div class="form-item">
         <div class="label">图标</div>
         <div class="control">
-          <nut-radio-group v-model="createState.iconName" direction="horizontal">
-            <nut-radio shape="button" label="dangao">
-              <svgIcon name="dangao" :size="24" />
-            </nut-radio>
-            <nut-radio shape="button" label="shengri">
-              <svgIcon name="shengri" :size="24" />
-            </nut-radio>
-            <nut-radio shape="button" label="love">
-              <svgIcon name="love" :size="24" />
+          <nut-radio-group v-model="formModel.icon" direction="horizontal" class="icon-list">
+            <nut-radio v-for="item in iconOptions" shape="button" :label="item">
+              <svgIcon :name="item" :size="24" />
             </nut-radio>
           </nut-radio-group>
         </div>
       </div>
       <div class="form-item">
         <div class="label">
-          <nut-radio-group v-model="createState.type" direction="horizontal">
-            <nut-radio shape="button" label="solar">公历</nut-radio>
-            <nut-radio shape="button" label="lunar">农历</nut-radio>
+          <nut-radio-group v-model="formModel.dateType" direction="horizontal">
+            <nut-radio shape="button" :label="DateTypeEnum.solar">公历</nut-radio>
+            <nut-radio shape="button" :label="DateTypeEnum.lunar">农历</nut-radio>
           </nut-radio-group>
         </div>
         <div class="control" @click="openSelectDate">
-          {{ createState.date || '选择日期' }}
+          {{ formModel.date || '选择日期' }}
           <IconFont name="arrow-right" :size="14" />
         </div>
       </div>
       <div class="form-item">
         <div class="label">显示方式</div>
         <div class="control">
-          <nut-radio-group v-model="createState.iconName" direction="horizontal">
-            <nut-radio shape="button" label="countdown">倒计日</nut-radio>
-            <nut-radio shape="button" label="cumulative">累计日</nut-radio>
+          <nut-radio-group v-model="formModel.type" direction="horizontal">
+            <nut-radio shape="button" :label="MemorialDayTypeEnum.conutdown">倒计日</nut-radio>
+            <nut-radio shape="button" :label="MemorialDayTypeEnum.cumulative">累计日</nut-radio>
           </nut-radio-group>
         </div>
       </div>
 
-      <div class="action"><nut-button block type="info" @click="show = false">完成</nut-button></div>
+      <div class="action"><nut-button block type="info" @click="saveConfirm">完成</nut-button></div>
     </div>
   </nut-popup>
 
@@ -69,23 +64,20 @@
       v-model="currentDate"
       :min-date="minDate"
       :max-date="maxDate"
-      @confirm="popupConfirm"
       :is-show-chinese="true"
+      @confirm="popupConfirm"
+      @cancel="showDatePopup = false"
     />
   </nut-popup>
 </template>
 
 <script lang="ts" setup>
+import { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
 import { IconFont } from '@nutui/icons-vue-taro'
-import { reactive, computed, ref, toRefs } from 'vue'
+import { computed, reactive, ref, toRefs } from 'vue'
 interface Props {
+  id?: number
   visible?: boolean
-}
-interface State {
-  name: string
-  iconName: string
-  date: string
-  type: 'solar' | 'lunar' // 公历 农历
 }
 
 const props = defineProps<Props>()
@@ -99,11 +91,25 @@ const show = computed({
   }
 })
 
-const createState = reactive<State>({
+const iconOptions = ref([
+  'dangao',
+  'shengri',
+  'love',
+  'shuimitao',
+  'lizhi',
+  'danta',
+  'qiaokeli',
+  'tizi',
+  'xiangjiao',
+  'chelizi'
+])
+
+const formModel = reactive<CreateMemorialDayDto>({
   name: '',
-  date: '1996-11-16',
-  iconName: '',
-  type: 'solar'
+  date: '',
+  icon: iconOptions.value[0],
+  dateType: DateTypeEnum.solar,
+  type: MemorialDayTypeEnum.conutdown
 })
 
 const showDatePopup = ref(false)
@@ -116,8 +122,19 @@ const openSelectDate = () => {
 }
 
 const popupConfirm = ({ selectedOptions }) => {
-  createState.date = selectedOptions.map((val: any) => val.text).join('')
+  formModel.date = selectedOptions.map((val: any) => val.text).join('')
   showDatePopup.value = false
+}
+
+const saveConfirm = () => {
+  show.value = false
+  console.log(formModel, 'formModel')
+}
+const hanldeClose = () => {
+  show.value = false
+  formModel.name = ''
+  formModel.date = ''
+  formModel.icon = iconOptions.value[0]
 }
 </script>
 
@@ -155,5 +172,13 @@ const popupConfirm = ({ selectedOptions }) => {
 }
 .nut-input {
   padding: 4px;
+}
+
+.icon-list {
+  display: inline-flex;
+  width: 72vw;
+  overflow: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 </style>

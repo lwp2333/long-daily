@@ -1,23 +1,34 @@
 import reuqest from './reuqest'
 
 export enum MemorialDayTypeEnum {
+  /** 倒计时 */
   conutdown,
+  /** 累计 */
   cumulative
+}
+
+export enum DateTypeEnum {
+  /** 公历 */
+  solar,
+  /** 农历 */
+  lunar
 }
 
 export interface MemorialDayEntity {
   id: number
   name: string
-  type: MemorialDayTypeEnum
+  dateType: DateTypeEnum
   date: string
+  type: MemorialDayTypeEnum
   lastUpdateTime: string
 }
 
 export interface CreateMemorialDayDto {
-  name: MemorialDayTypeEnum
+  name: string
   icon: string
-  type: string
-  date: number
+  dateType: DateTypeEnum
+  date: string
+  type: MemorialDayTypeEnum
 }
 
 const create = (data: CreateMemorialDayDto) => {

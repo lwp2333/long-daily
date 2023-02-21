@@ -34,12 +34,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserInfoStore } from '@/store/userStoree'
+import { useUserStore } from '@/store/userStore'
 import Taro from '@tarojs/taro'
 import { computed } from 'vue'
 // import { IconFont } from '@nutui/icons-vue-taro'
 
-const userStore = useUserInfoStore()
+const userStore = useUserStore()
 
 const userInfo = computed(() => userStore.$state)
 

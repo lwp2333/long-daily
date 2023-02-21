@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserInfoStore } from '@/store/userStoree';
-import Taro from '@tarojs/taro';
+import { useUserStore } from '@/store/userStore'
+import Taro from '@tarojs/taro'
 
-const useStore = useUserInfoStore()
+const useStore = useUserStore()
 
 if (useStore.token) {
   Taro.switchTab({
