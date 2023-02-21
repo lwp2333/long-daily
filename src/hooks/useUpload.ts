@@ -1,4 +1,4 @@
-import { useOssInfoStore } from '@/store/ossInfo'
+import { useOssInfoStore } from '@/store/ossStore'
 import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
 import { computed, reactive, ref } from 'vue'
@@ -20,7 +20,7 @@ const useUpload = () => {
     // 重置进度条
     singleProgress.value = 0
     const dayNow = dayjs().format('YYYYMMDD')
-    const key = `weapp/${dayNow}/${filePath.slice(-8)}`
+    const key = `weapp/${dayNow}/${filePath.slice(-12)}`
 
     const uploadTask = Taro.uploadFile({
       url: ossConfig.value.host, // 开发者服务器的URL。
@@ -54,7 +54,7 @@ const useUpload = () => {
       const list: Taro.uploadFile.SuccessCallbackResult | TaroGeneral.CallbackResult[] = []
       for (const filePath in filePaths) {
         const dayNow = dayjs().format('YYYYMMDD')
-        const key = `weapp/${dayNow}/${filePath.slice(-8)}`
+        const key = `weapp/${dayNow}/${filePath.slice(-12)}`
         const index = filePaths.findIndex(it => it === filePath) //文件索引
         Taro.uploadFile({
           url: ossConfig.value.host, // 开发者服务器的URL。

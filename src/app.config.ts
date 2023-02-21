@@ -4,6 +4,8 @@ export default defineAppConfig({
     'pages/index',
     'pages/time-machine',
     'pages/memorial-day',
+    'pages/life-inventory',
+    'pages/preview',
     'pages/upload',
     'pages/album',
     'pages/album-create',

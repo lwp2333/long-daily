@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useUserInfoStore = defineStore('appInfo', {
+export const useUserStore = defineStore('userStore', {
   state: () => ({
     token: 'valid',
     openid: 'oqy5602kT2ptTR4NmbbbM-xkP3ZA',

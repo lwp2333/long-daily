@@ -45,7 +45,7 @@
         <div class="name">纪念日</div>
         <div class="desc">2个</div>
       </div>
-      <div class="app-item" style="margin-bottom: -12px">
+      <div class="app-item" style="margin-bottom: -12px" @click="navTo('/pages/life-inventory')">
         <svgIcon name="list" :size="36" />
         <div class="name">人生清单</div>
         <div class="desc">12个</div>

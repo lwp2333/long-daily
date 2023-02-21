@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserInfoStore } from '@/store/userInfo'
+import { useUserInfoStore } from '@/store/userStoree'
 import Taro from '@tarojs/taro'
 import { computed } from 'vue'
 // import { IconFont } from '@nutui/icons-vue-taro'

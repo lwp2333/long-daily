@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     NutActionSheet: typeof import('@nutui/nutui-taro')['ActionSheet']
     NutAnimate: typeof import('@nutui/nutui-taro')['Animate']
     NutAvatar: typeof import('@nutui/nutui-taro')['Avatar']
+    NutBadge: typeof import('@nutui/nutui-taro')['Badge']
     NutButton: typeof import('@nutui/nutui-taro')['Button']
     NutCell: typeof import('@nutui/nutui-taro')['Cell']
     NutCellGroup: typeof import('@nutui/nutui-taro')['CellGroup']
