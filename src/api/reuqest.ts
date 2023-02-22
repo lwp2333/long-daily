@@ -1,32 +1,35 @@
 import Taro from '@tarojs/taro'
 
-const baseUrl = 'http://localhost:3000'
+const baseUrl = 'http://wx.ikun.js.cn'
 
-const Get = <T>(url: string, data?: unknown) => {
-  return Taro.request<T>({
+const Get = async <T>(url: string, data?: unknown) => {
+  const res = await Taro.request<T>({
     url: baseUrl + url,
     method: 'GET',
     timeout: 3200,
     data
-  }).then(res => res.data)
+  })
+  return res.data
 }
 
-const Post = <T>(url: string, data?: unknown) => {
-  return Taro.request<T>({
+const Post = async <T>(url: string, data?: unknown) => {
+  const res = await Taro.request<T>({
     url: baseUrl + url,
     method: 'POST',
     timeout: 3200,
     data
-  }).then(res => res.data)
+  })
+  return res.data
 }
 
-const Delect = <T>(url: string, data?: unknown) => {
-  return Taro.request<T>({
+const Delect = async <T>(url: string, data?: unknown) => {
+  const res = await Taro.request<T>({
     url: baseUrl + url,
     method: 'DELETE',
     timeout: 3200,
     data
-  }).then(res => res.data)
+  })
+  return res.data
 }
 
 export default {
