@@ -49,7 +49,7 @@
         <div class="label">显示方式</div>
         <div class="control">
           <nut-radio-group v-model="formModel.type" direction="horizontal">
-            <nut-radio shape="button" :label="MemorialDayTypeEnum.conutdown">倒计日</nut-radio>
+            <nut-radio shape="button" :label="MemorialDayTypeEnum.countdown">倒计日</nut-radio>
             <nut-radio shape="button" :label="MemorialDayTypeEnum.cumulative">累计日</nut-radio>
           </nut-radio-group>
         </div>
@@ -64,7 +64,7 @@
       v-model="currentDate"
       :min-date="minDate"
       :max-date="maxDate"
-      :is-show-chinese="true"
+      :is-show-chinese="false"
       @confirm="popupConfirm"
       @cancel="showDatePopup = false"
     />
@@ -72,8 +72,10 @@
 </template>
 
 <script lang="ts" setup>
-import { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
+import memorialDayApi, { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
+import Taro from '@tarojs/taro'
 import { computed, reactive, ref, toRefs } from 'vue'
 interface Props {
   id?: number
@@ -109,7 +111,7 @@ const formModel = reactive<CreateMemorialDayDto>({
   date: '',
   icon: iconOptions.value[0],
   dateType: DateTypeEnum.solar,
-  type: MemorialDayTypeEnum.conutdown
+  type: MemorialDayTypeEnum.countdown
 })
 
 const showDatePopup = ref(false)
@@ -122,13 +124,27 @@ const openSelectDate = () => {
 }
 
 const popupConfirm = ({ selectedOptions }) => {
-  formModel.date = selectedOptions.map((val: any) => val.text).join('')
+  formModel.date = selectedOptions.map((val: any) => val.text).join('-')
   showDatePopup.value = false
 }
 
+const dataStore = useDataStore()
+
 const saveConfirm = () => {
-  show.value = false
-  console.log(formModel, 'formModel')
+  memorialDayApi
+    .create(formModel)
+    .then(() => {
+      show.value = false
+      Taro.showToast({
+        title: '操作成功'
+      })
+      dataStore.getMemorialDayData()
+    })
+    .catch(() => {
+      Taro.showToast({
+        title: '操作失败'
+      })
+    })
 }
 const hanldeClose = () => {
   show.value = false

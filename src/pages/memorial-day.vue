@@ -1,26 +1,32 @@
 <template>
   <div class="memorial-day-page">
-    <div class="day-item-big">
-      <span class="name">她的生日</span>
-      <text class="big-num">
-        <text class="unit">还有</text>
-        250
-        <text class="unit">天</text>
-      </text>
-      <span class="desc"> 目标日：2023年10月29日 </span>
-      <span class="tag">最近的纪念日</span>
-      <svgIcon class="big-svg" name="dangao" :size="120" />
-    </div>
-    <div class="day-item">
-      <svgIcon name="shengri" :size="32" />
-      <span class="name">我的生日还有</span>
-      <span class="num">310天</span>
-    </div>
-    <div class="day-item">
-      <svgIcon name="love" :size="32" />
-      <span class="name">xxxxxx</span>
-      <span class="num">0天</span>
-    </div>
+    <template v-for="(item, index) in list">
+      <div v-if="index === 0" class="day-item-big">
+        <span class="name">{{ item.name }}</span>
+        <text class="big-num">
+          <text class="unit">
+            {{ item.type === MemorialDayTypeEnum.countdown ? '还有' : '累计' }}
+          </text>
+          {{ item.days }}
+          <text class="unit">天</text>
+        </text>
+        <span class="desc" v-if="item.type === MemorialDayTypeEnum.countdown">
+          目标日： {{ item.originDate }}（阳历）
+        </span>
+        <span class="desc" v-else>
+          起始日：
+          {{ item.date }}
+          {{ item.dateType === DateTypeEnum.lunar ? '（农历）' : '阳历）' }}
+        </span>
+        <span class="tag">最近的纪念日</span>
+        <svgIcon class="big-svg" :name="item.icon" :size="120" />
+      </div>
+      <div v-else class="day-item">
+        <svgIcon :name="item.icon" :size="32" />
+        <span class="name">{{ item.name }}</span>
+        <span class="num">{{ item.days }}天</span>
+      </div>
+    </template>
   </div>
 
   <div class="fixed-action" @click="openCreate">
@@ -31,9 +37,20 @@
 </template>
 
 <script lang="ts" setup>
+import { DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
 import createMemorialDay from '@/components/createMemorialDay.vue'
 import svgIcon from '@/components/svgIcon.vue'
-import { ref } from 'vue'
+import { useDataStore } from '@/store/dataStore'
+import { sortMemorialDayList } from '@/utils'
+import { computed, ref, watchEffect } from 'vue'
+
+const dataStore = useDataStore()
+
+const list = computed(() => sortMemorialDayList(dataStore.memorialDayList))
+
+watchEffect(async () => {
+  await dataStore.getMemorialDayData()
+})
 
 const show = ref(false)
 const openCreate = () => {

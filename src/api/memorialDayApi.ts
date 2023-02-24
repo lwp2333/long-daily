@@ -2,21 +2,22 @@ import reuqest from './reuqest'
 
 export enum MemorialDayTypeEnum {
   /** 倒计时 */
-  conutdown,
+  countdown = 'countdown',
   /** 累计 */
-  cumulative
+  cumulative = 'cumulative'
 }
 
 export enum DateTypeEnum {
   /** 公历 */
-  solar,
+  solar = 'solar',
   /** 农历 */
-  lunar
+  lunar = 'lunar'
 }
 
 export interface MemorialDayEntity {
   id: number
   name: string
+  icon: string
   dateType: DateTypeEnum
   date: string
   type: MemorialDayTypeEnum

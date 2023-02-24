@@ -1,9 +1,9 @@
 import reuqest from './reuqest'
 
 export enum GenderEnum {
-  unknown,
-  female,
-  male
+  unknown = 'unknown',
+  female = 'female',
+  male = 'male'
 }
 export interface LoginEntity {
   token: string

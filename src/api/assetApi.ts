@@ -1,10 +1,10 @@
 import reuqest from './reuqest'
 
 export enum AssetTypeEnum {
-  unknown,
-  image,
-  video,
-  audio
+  unknown = 'unknown',
+  image = 'image',
+  video = 'video',
+  audio = 'audio'
 }
 
 export interface AssetEntity {

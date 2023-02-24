@@ -1,11 +1,11 @@
 import reuqest from './reuqest'
 
 export enum LifeInventoryStatusEnum {
-  unFinish,
-  finish
+  unFinish = 'unFinish',
+  finish = 'finish'
 }
 
-export interface MemorialDayEntity {
+export interface LifeInventoryEntity {
   id: number
   name: string
   status: LifeInventoryStatusEnum
@@ -22,19 +22,19 @@ export interface CreateLifeInventoryDto {
 }
 
 const create = (data: CreateLifeInventoryDto) => {
-  return reuqest.Post<MemorialDayEntity>('/life-inventory/create', data)
+  return reuqest.Post<LifeInventoryEntity>('/life-inventory/create', data)
 }
 
 const getAllList = () => {
-  return reuqest.Get<MemorialDayEntity[]>('/life-inventory/list')
+  return reuqest.Get<LifeInventoryEntity[]>('/life-inventory/list')
 }
 
 const getDetailById = (id: number) => {
-  return reuqest.Get<MemorialDayEntity>(`/life-inventory/${id}`)
+  return reuqest.Get<LifeInventoryEntity>(`/life-inventory/${id}`)
 }
 
 const updateById = (id: number, data: Partial<CreateLifeInventoryDto>) => {
-  return reuqest.Post<MemorialDayEntity>(`/life-inventory/${id}`, data)
+  return reuqest.Post<LifeInventoryEntity>(`/life-inventory/${id}`, data)
 }
 
 const deleteById = (id: number) => {
