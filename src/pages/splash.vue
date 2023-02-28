@@ -7,16 +7,11 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/store/userStore'
 import Taro from '@tarojs/taro'
 
-const useStore = useUserStore()
-
-if (useStore.token) {
-  Taro.switchTab({
-    url: '/pages/index'
-  })
-}
+Taro.switchTab({
+  url: '/pages/index'
+})
 const handleAuth = async () => {
   try {
     const res = await Taro.login()

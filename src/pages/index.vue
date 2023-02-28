@@ -43,7 +43,7 @@
       <div class="app-item" style="margin-bottom: 12px" @click="navTo('/pages/memorial-day')">
         <svgIcon name="rili" :size="36" />
         <div class="name">纪念日</div>
-        <div class="desc">2个</div>
+        <div class="desc">{{ memorialDayList.length }}个</div>
       </div>
       <div class="app-item" style="margin-bottom: -12px" @click="navTo('/pages/life-inventory')">
         <svgIcon name="list" :size="36" />
@@ -58,8 +58,9 @@
 
 <script lang="ts" setup>
 import useAsset from '@/hooks/useAsset'
+import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 
 const navTo = (url: string) => {
   Taro.navigateTo({
@@ -124,6 +125,11 @@ watch(currentGif, () => {
 onMounted(() => {
   runPet()
 })
+const dataStore = useDataStore()
+watchEffect(async () => {
+  await dataStore.getMemorialDayData()
+})
+const memorialDayList = computed(() => dataStore.memorialDayList)
 </script>
 <style lang="scss">
 .index-page {

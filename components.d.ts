@@ -17,6 +17,7 @@ declare module '@vue/runtime-core' {
     NutCellGroup: typeof import('@nutui/nutui-taro')['CellGroup']
     NutCountdown: typeof import('@nutui/nutui-taro')['Countdown']
     NutDatePicker: typeof import('@nutui/nutui-taro')['DatePicker']
+    NutDialog: typeof import('@nutui/nutui-taro')['Dialog']
     NutGrid: typeof import('@nutui/nutui-taro')['Grid']
     NutGridItem: typeof import('@nutui/nutui-taro')['GridItem']
     NutInput: typeof import('@nutui/nutui-taro')['Input']

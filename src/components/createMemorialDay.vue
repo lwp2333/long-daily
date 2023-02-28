@@ -55,12 +55,17 @@
         </div>
       </div>
 
-      <div class="action"><nut-button block type="info" @click="saveConfirm">完成</nut-button></div>
+      <div class="action">
+        <nut-button block type="info" @click="saveConfirm">
+          {{ id ? '更新' : '保存' }}
+        </nut-button>
+      </div>
     </div>
   </nut-popup>
 
   <nut-popup position="bottom" v-model:visible="showDatePopup">
     <nut-date-picker
+      v-if="showDatePopup"
       v-model="currentDate"
       :min-date="minDate"
       :max-date="maxDate"
@@ -76,7 +81,8 @@ import memorialDayApi, { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
-import { computed, reactive, ref, toRefs } from 'vue'
+import dayjs from 'dayjs'
+import { computed, reactive, ref, toRefs, watchEffect } from 'vue'
 interface Props {
   id?: number
   visible?: boolean
@@ -85,7 +91,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits(['change', 'update:visible'])
 
-const { visible } = toRefs(props)
+const { visible, id } = toRefs(props)
 const show = computed({
   get: () => visible?.value || false,
   set: (val: boolean) => {
@@ -114,6 +120,17 @@ const formModel = reactive<CreateMemorialDayDto>({
   type: MemorialDayTypeEnum.countdown
 })
 
+watchEffect(async () => {
+  if (id?.value) {
+    const res = await memorialDayApi.getDetailById(id.value)
+    formModel.name = res.name
+    formModel.icon = res.icon
+    formModel.date = dayjs(res.date).format('YYYY-MM-DD')
+    formModel.dateType = res.dateType
+    formModel.type = res.type
+  }
+})
+
 const showDatePopup = ref(false)
 const minDate = new Date(1900, 1, 1)
 const maxDate = new Date(2100, 12, 30)
@@ -121,6 +138,7 @@ const currentDate = ref(new Date())
 
 const openSelectDate = () => {
   showDatePopup.value = true
+  currentDate.value = dayjs(formModel.date).toDate()
 }
 
 const popupConfirm = ({ selectedOptions }) => {
@@ -130,21 +148,23 @@ const popupConfirm = ({ selectedOptions }) => {
 
 const dataStore = useDataStore()
 
-const saveConfirm = () => {
-  memorialDayApi
-    .create(formModel)
-    .then(() => {
-      show.value = false
-      Taro.showToast({
-        title: '操作成功'
-      })
-      dataStore.getMemorialDayData()
+const saveConfirm = async () => {
+  try {
+    if (id?.value) {
+      await memorialDayApi.updateById(id.value, formModel)
+    } else {
+      await memorialDayApi.create(formModel)
+    }
+    show.value = false
+    Taro.showToast({
+      title: '操作成功'
     })
-    .catch(() => {
-      Taro.showToast({
-        title: '操作失败'
-      })
+    dataStore.getMemorialDayData()
+  } catch (error) {
+    Taro.showToast({
+      title: '操作失败'
     })
+  }
 }
 const hanldeClose = () => {
   show.value = false

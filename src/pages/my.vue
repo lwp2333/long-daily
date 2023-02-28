@@ -34,14 +34,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useUserStore } from '@/store/userStore'
+import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
 import { computed } from 'vue'
 // import { IconFont } from '@nutui/icons-vue-taro'
 
-const userStore = useUserStore()
+const dataStore = useDataStore()
 
-const userInfo = computed(() => userStore.$state)
+const userInfo = computed(() => dataStore.userInfo)
 
 const handleNav = (url: string) => {
   Taro.navigateTo({

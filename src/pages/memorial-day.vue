@@ -1,7 +1,7 @@
 <template>
   <div class="memorial-day-page">
     <template v-for="(item, index) in list">
-      <div v-if="index === 0" class="day-item-big">
+      <div v-if="index === 0" class="day-item-big" @longpress="handleAction(item.id)">
         <span class="name">{{ item.name }}</span>
         <text class="big-num">
           <text class="unit">
@@ -21,7 +21,7 @@
         <span class="tag">最近的纪念日</span>
         <svgIcon class="big-svg" :name="item.icon" :size="120" />
       </div>
-      <div v-else class="day-item">
+      <div v-else class="day-item" @longpress="handleAction(item.id)">
         <svgIcon :name="item.icon" :size="32" />
         <span class="name">{{ item.name }}</span>
         <span class="num">{{ item.days }}天</span>
@@ -33,28 +33,81 @@
     <svgIcon name="add" :size="48" />
   </div>
 
-  <createMemorialDay v-model:visible="show" />
+  <createMemorialDay v-model:visible="show" :id="curId" />
+
+  <nut-action-sheet
+    v-model:visible="actionState.show"
+    :menu-items="(actionState.menuItems as any)"
+    cancel-txt="取消"
+    @choose="selected"
+  >
+  </nut-action-sheet>
+  <nut-dialog content="确定删除嘛？" v-model:visible="delShow" @cancel="hanldeDelCancel" @ok="hanldeDelConfirm" />
 </template>
 
 <script lang="ts" setup>
-import { DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
+import memorialDayApi, { DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
 import createMemorialDay from '@/components/createMemorialDay.vue'
 import svgIcon from '@/components/svgIcon.vue'
 import { useDataStore } from '@/store/dataStore'
 import { sortMemorialDayList } from '@/utils'
-import { computed, ref, watchEffect } from 'vue'
+import { menuItems } from '@nutui/nutui-taro/dist/types/__VUE/actionsheet/index.taro.vue'
+import Taro from '@tarojs/taro'
+import { computed, reactive, ref, watchEffect } from 'vue'
 
 const dataStore = useDataStore()
 
 const list = computed(() => sortMemorialDayList(dataStore.memorialDayList))
 
-watchEffect(async () => {
-  await dataStore.getMemorialDayData()
+watchEffect(() => {
+  dataStore.getMemorialDayData()
 })
 
 const show = ref(false)
 const openCreate = () => {
   show.value = true
+}
+
+const curId = ref<number>()
+const handleAction = (id: number) => {
+  Taro.vibrateShort()
+  curId.value = id
+  actionState.show = true
+}
+
+const actionState = reactive({
+  show: false,
+  menuItems: [
+    {
+      name: '编辑'
+    },
+    {
+      name: '删除',
+      color: 'red'
+    }
+  ]
+})
+
+const selected = ({ name }: menuItems) => {
+  if (name === '编辑') {
+    show.value = true
+  } else {
+    delShow.value = true
+  }
+}
+const delShow = ref(false)
+
+const hanldeDelCancel = () => {
+  curId.value = undefined
+  delShow.value = false
+}
+const hanldeDelConfirm = () => {
+  memorialDayApi.deleteById(curId.value!).then(() => {
+    Taro.showToast({
+      title: '删除成功'
+    })
+    dataStore.getMemorialDayData()
+  })
 }
 </script>
 <style lang="scss">

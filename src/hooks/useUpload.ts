@@ -1,10 +1,18 @@
+import { useDataStore } from '@/store/dataStore'
 import { useOssInfoStore } from '@/store/ossStore'
 import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watchEffect } from 'vue'
+
+const getFileKey = (filePath: string, openid: string) => {
+  const dayNow = dayjs().format('YYYYMMDD')
+  return `weapp/${openid}/${dayNow}/${filePath.slice(-12)}`
+}
 
 const useUpload = () => {
   const ossStore = useOssInfoStore()
+  const dataStore = useDataStore()
+  const openid = computed(() => dataStore.userInfo.openid)
   const ossConfig = computed(() => {
     const { host, policy, OSSAccessKeyId, signature } = ossStore
     return {
@@ -19,9 +27,7 @@ const useUpload = () => {
   const startUpload = async (filePath: string) => {
     // 重置进度条
     singleProgress.value = 0
-    const dayNow = dayjs().format('YYYYMMDD')
-    const key = `weapp/${dayNow}/${filePath.slice(-12)}`
-
+    const key = getFileKey(filePath, openid.value)
     const uploadTask = Taro.uploadFile({
       url: ossConfig.value.host, // 开发者服务器的URL。
       filePath,
@@ -34,7 +40,12 @@ const useUpload = () => {
     uploadTask.onProgressUpdate(res => {
       singleProgress.value = res.progress
     })
-    return await uploadTask
+    try {
+      await uploadTask
+      return Promise.resolve(`${ossConfig.value.host}/${key}`) // 自己拼完整url
+    } catch (error) {
+      return Promise.reject(error)
+    }
   }
 
   // 多文件上传
@@ -43,18 +54,15 @@ const useUpload = () => {
     fail: 0,
     total: 20
   })
-  const startUploadMutile = async (
-    filePaths: string[]
-  ): Promise<Taro.uploadFile.SuccessCallbackResult | TaroGeneral.CallbackResult[]> => {
+  const startUploadMutile = async (filePaths: string[]): Promise<string[]> => {
     // 重置进度条
     multiProgress.success = 0
     multiProgress.total = filePaths.length
 
     return new Promise(resolve => {
-      const list: Taro.uploadFile.SuccessCallbackResult | TaroGeneral.CallbackResult[] = []
-      for (const filePath in filePaths) {
-        const dayNow = dayjs().format('YYYYMMDD')
-        const key = `weapp/${dayNow}/${filePath.slice(-12)}`
+      const list: string[] = []
+      for (const filePath of filePaths) {
+        const key = getFileKey(filePath, openid.value)
         const index = filePaths.findIndex(it => it === filePath) //文件索引
         Taro.uploadFile({
           url: ossConfig.value.host, // 开发者服务器的URL。
@@ -64,12 +72,12 @@ const useUpload = () => {
             key,
             ...ossConfig.value
           },
-          success(res) {
-            list[index] = res
+          success() {
+            list[index] = `${ossConfig.value.host}/${key}`
             multiProgress.success++
           },
-          fail(err) {
-            list[index] = err
+          fail() {
+            list[index] = `${ossConfig.value.host}/${key}`
             multiProgress.fail++
           },
           complete() {
@@ -83,9 +91,16 @@ const useUpload = () => {
     })
   }
 
+  watchEffect(() => {
+    // 刷新token先
+    ossStore.freshToken()
+  })
+
   return {
     startUpload,
-    startUploadMutile
+    singleProgress,
+    startUploadMutile,
+    multiProgress
   }
 }
 

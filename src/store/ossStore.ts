@@ -1,3 +1,4 @@
+import ossApi from '@/api/ossApi'
 import { defineStore } from 'pinia'
 
 export const useOssInfoStore = defineStore('ossStore', {
@@ -8,6 +9,18 @@ export const useOssInfoStore = defineStore('ossStore', {
     policy: ''
   }),
   actions: {
-    freshToken() {}
+    async freshToken() {
+      if (this.signature) {
+        return
+      }
+      try {
+        const res = await ossApi.getToken()
+        this.OSSAccessKeyId = res.accessKeyId
+        this.signature = res.signature
+        this.policy = res.policy
+      } catch (error) {
+        console.log('getOssToken', error)
+      }
+    }
   }
 })
