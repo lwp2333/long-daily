@@ -1,15 +1,17 @@
 import reuqest from './reuqest'
 
-interface AlbumEntity {
+export interface AlbumEntity {
   id: number
   name: string
+  desc: string
   coverUrl: string
   assetCount: string
   lastUpdateTime: string
 }
 
-interface CreateAlbumDto {
+export interface CreateAlbumDto {
   name: string
+  desc: string
   coverUrl: string
 }
 

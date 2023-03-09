@@ -2,9 +2,7 @@
   <div class="myPage">
     <div class="header">
       <div class="top">
-        <nut-avatar size="48">
-          <img :src="userInfo.avatar" />
-        </nut-avatar>
+        <img :src="userInfo.avatar" class="avatar" />
         <div class="right">
           <div class="nickName">{{ userInfo.nickName }}</div>
           <div class="signature">{{ userInfo.signature }}</div>
@@ -129,5 +127,12 @@ const handleNav = (url: string) => {
 .card {
   border-radius: 12px;
   background-color: #fff;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 50%;
 }
 </style>

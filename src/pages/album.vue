@@ -10,10 +10,10 @@
         </div>
       </nut-grid-item>
       <nut-grid-item v-for="item in albumList" :key="item.id">
-        <div class="card" @click="navDetail">
+        <div class="card" @click="navDetail(item.id)">
           <image :src="item.coverUrl" mode="aspectFill" class="cover" />
           <div class="name">{{ item.name }}</div>
-          <div class="info">{{ item.count }}张</div>
+          <div class="info">xxx张</div>
         </div>
       </nut-grid-item>
     </nut-grid>
@@ -21,36 +21,14 @@
 </template>
 
 <script lang="ts" setup>
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
+import { computed } from 'vue'
 
-interface AlbumItem {
-  id: number
-  name: string
-  coverUrl: string
-  count: number
-}
+const dataStore = useDataStore()
 
-const albumList: AlbumItem[] = [
-  {
-    id: 1,
-    name: '说说和日志相册',
-    coverUrl: 'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky4.jpg?x-oss-process=style/images_convert',
-    count: 350
-  },
-  {
-    id: 2,
-    name: '《人间凑数的日子》',
-    coverUrl: 'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky5.jpg?x-oss-process=style/images_convert',
-    count: 18
-  },
-  {
-    id: 3,
-    name: '刚刚好',
-    coverUrl: 'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky8.jpg?x-oss-process=style/images_convert',
-    count: 299
-  }
-]
+const albumList = computed(() => dataStore.albumList)
 
 const navCreate = () => {
   Taro.navigateTo({
@@ -58,9 +36,9 @@ const navCreate = () => {
   })
 }
 
-const navDetail = () => {
+const navDetail = (id: number) => {
   Taro.navigateTo({
-    url: '/pages/album-detail'
+    url: `/pages/album-detail?id=${id}`
   })
 }
 </script>

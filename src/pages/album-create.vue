@@ -1,8 +1,8 @@
 <template>
   <div class="albumCreatePage">
     <div class="cover" @click="handleChangeCover">
-      <template v-if="createState.cover">
-        <image :src="createState.cover" mode="aspectFill" class="coverImg" />
+      <template v-if="form.coverUrl">
+        <image :src="form.coverUrl" mode="aspectFill" class="coverImg" />
       </template>
       <template v-else>
         <IconFont name="photograph" :size="36" color="#fff" />
@@ -14,7 +14,7 @@
         <div class="label">相册名称</div>
         <div class="control">
           <nut-input
-            v-model="createState.name"
+            v-model="form.name"
             type="text"
             :max-length="8"
             show-word-limit
@@ -27,41 +27,77 @@
         <div class="label">相册描述</div>
         <div class="control">
           <nut-textarea
-            v-model="createState.desc"
+            v-model="form.desc"
             :autosize="{
               maxHeight: 72,
               minHeight: 54
             }"
-            :max-length="48"
+            :max-length="32"
             limit-show
             placeholder="请填写相册描述"
           />
         </div>
       </div>
     </div>
-    <div class="action"><nut-button block type="info">创建</nut-button></div>
+    <div class="action">
+      <nut-button block type="info" @click="handleConfirmSave">保存</nut-button>
+    </div>
+    <div class="back-icon" @click="handleBack"><IconFont name="left" />返回</div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import albumApi, { CreateAlbumDto } from '@/api/albumApi'
+import useUpload from '@/hooks/useUpload'
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
 import { reactive } from 'vue'
 
-const createState = reactive({
-  cover: '',
+const form = reactive<CreateAlbumDto>({
   name: '',
-  desc: ''
+  desc: '',
+  coverUrl: ''
 })
+const dataStore = useDataStore()
+const { startUpload } = useUpload()
 
 const handleChangeCover = () => {
   Taro.chooseImage({
     count: 1,
     sourceType: ['album', 'camera'],
-    success(res) {
-      createState.cover = res.tempFilePaths[0]
+    async success(res) {
+      const cropInfo = await Taro.cropImage({
+        src: res.tempFilePaths[0],
+        cropScale: '1:1'
+      })
+      const url = await startUpload(cropInfo.tempFilePath)
+      console.log('url', url)
+      form.coverUrl = url
     }
   })
+}
+
+const handleConfirmSave = async () => {
+  try {
+    Taro.showLoading()
+    albumApi.create(form)
+    Taro.showToast({
+      title: '保存成功！'
+    })
+    await dataStore.getAlbumList()
+    handleBack()
+  } catch (error) {
+    Taro.showToast({
+      title: '保存失败！'
+    })
+  } finally {
+    Taro.hideLoading()
+  }
+}
+
+const handleBack = () => {
+  Taro.navigateBack()
 }
 </script>
 <style lang="scss">
@@ -111,5 +147,16 @@ const handleChangeCover = () => {
   bottom: 0;
   background-color: #fff;
   padding: 16px 12vw;
+  box-shadow: 0 6px 15px rgb(0 0 0 / 16%);
+}
+
+.back-icon {
+  position: fixed;
+  left: 12px;
+  top: calc(12px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 16px;
 }
 </style>

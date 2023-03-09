@@ -17,8 +17,15 @@
 </template>
 
 <script lang="ts" setup>
-import Taro from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
+import { computed } from 'vue'
 import { ref } from 'vue'
+
+const Router = useRouter<{ id: string }>()
+
+const id = computed(() => Router.params.id)
+
+console.log('id', id)
 
 Taro.setNavigationBarTitle({
   title: '说说和日志相册'
