@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AssetCard: typeof import('./src/components/assetCard.vue')['default']
     CreateMemorialDay: typeof import('./src/components/createMemorialDay.vue')['default']
     NutActionSheet: typeof import('@nutui/nutui-taro')['ActionSheet']
     NutAnimate: typeof import('@nutui/nutui-taro')['Animate']
@@ -29,6 +30,7 @@ declare module '@vue/runtime-core' {
     NutSwiperItem: typeof import('@nutui/nutui-taro')['SwiperItem']
     NutTextarea: typeof import('@nutui/nutui-taro')['Textarea']
     RecordCard: typeof import('./src/components/recordCard.vue')['default']
+    RecordPlay: typeof import('./src/components/recordPlay.vue')['default']
     SvgIcon: typeof import('./src/components/svgIcon.vue')['default']
   }
 }

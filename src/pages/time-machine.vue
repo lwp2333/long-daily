@@ -21,13 +21,15 @@
           该生学习态度端正,学习认真,已经过国家英语四级,有较强的思维本事和动手本事。吃苦耐劳朴实大方,
           思想上要求提高,进取向党组织靠拢,学习勤奋努力喜欢体育运...
         </div>
-        <div class="asset">
+
+        <AssetCard />
+        <!-- <div class="asset">
           <nut-grid :gutter="0" :column-num="3" :border="false">
             <nut-grid-item v-for="(item, index) in imgList" :key="index" @click="openPreview(imgList, index)">
               <image :src="item" mode="aspectFill" class="mini_pic" />
             </nut-grid-item>
           </nut-grid>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -49,6 +51,7 @@ import { IconFont } from '@nutui/icons-vue-taro'
 import recordCard from '@/components/recordCard.vue'
 import Taro from '@tarojs/taro'
 import { onMounted, reactive, ref } from 'vue'
+import AssetCard from '@/components/assetCard.vue'
 // import useAsset from '@/hooks/useAsset'
 interface SwiperState {
   page: number
@@ -179,18 +182,7 @@ const recordState = reactive({
   }
 }
 
-.mini_pic {
-  width: 100%;
-  height: 100px;
-  border-radius: 4px;
-}
-.nut-grid-item__content {
-  padding: 1px;
-}
 
-.nut-grid-item__text {
-  display: none;
-}
 
 .popclass {
   padding-bottom: 36px;

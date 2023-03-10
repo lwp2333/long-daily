@@ -1,16 +1,19 @@
 import albumApi, { AlbumEntity } from '@/api/albumApi'
-import { LifeInventoryEntity } from '@/api/lifeInventory'
+import lifeInventoryApi, { LifeInventoryEntity } from '@/api/lifeInventoryApi'
 import memorialDayApi, { MemorialDayEntity } from '@/api/memorialDayApi'
+import plogApi, { PlogEntity } from '@/api/plogApi'
 import userApi, { GenderEnum, UserEntity } from '@/api/userApi'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 
 interface State {
   allInit: boolean
-  memorialDayList: MemorialDayEntity[]
-  albumList: AlbumEntity[]
-  lifeInventory: LifeInventoryEntity[]
   userInfo: UserEntity
+  plogList: PlogEntity[]
+  plogTotal: number
+  albumList: AlbumEntity[]
+  memorialDayList: MemorialDayEntity[]
+  lifeInventory: LifeInventoryEntity[]
 }
 
 export const mapGender = {
@@ -23,9 +26,6 @@ export const useDataStore = defineStore('dataStore', {
   state: (): State => {
     return {
       allInit: false,
-      memorialDayList: [],
-      lifeInventory: [],
-      albumList: [],
       userInfo: {
         openid: 'oqy5602kT2ptTR4NmbbbM-xkP3ZA',
         nickName: '',
@@ -33,15 +33,24 @@ export const useDataStore = defineStore('dataStore', {
         gender: GenderEnum.unknown,
         birthday: '',
         signature: ''
-      }
+      },
+      plogList: [],
+      plogTotal: 0,
+      albumList: [],
+      memorialDayList: [],
+      lifeInventory: []
     }
   },
   actions: {
     async initData() {
       if (this.allInit) return
-      await this.getUserInfo()
-      await this.getAlbumList()
-      await this.getMemorialDayData()
+      await Promise.all([
+        this.getUserInfo(),
+        this.getPlogList(),
+        this.getAlbumList(),
+        this.getMemorialDayData(),
+        this.getLifeInventory()
+      ])
       this.allInit = true
     },
     async getUserInfo() {
@@ -49,6 +58,19 @@ export const useDataStore = defineStore('dataStore', {
       this.userInfo = {
         ...res,
         birthday: dayjs(res.birthday).format('YYYY-MM-DD')
+      }
+    },
+    async getPlogList(pageIndex = 1, pageSize = 20) {
+      const res = await plogApi.getListByPage(pageIndex, pageSize)
+      this.plogTotal = res.total
+      const list = res.list.map(it => {
+        return {
+          ...it,
+          lastUpdateTime: dayjs(it.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
+        }
+      })
+      if (list.length) {
+        this.plogList.concat(...list)
       }
     },
     async getAlbumList() {
@@ -66,6 +88,15 @@ export const useDataStore = defineStore('dataStore', {
         return {
           ...it,
           date: dayjs(it.date).format('YYYY-MM-DD')
+        }
+      })
+    },
+    async getLifeInventory() {
+      const res = await lifeInventoryApi.getAllList()
+      this.lifeInventory = res.map(it => {
+        return {
+          ...it,
+          lastUpdateTime: dayjs(it.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
         }
       })
     }

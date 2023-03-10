@@ -1,5 +1,6 @@
 export default defineAppConfig({
   pages: [
+    'pages/empty',
     'pages/splash',
     'pages/index',
     'pages/time-machine',

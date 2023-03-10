@@ -1,7 +1,7 @@
 import reuqest from './reuqest'
 import { AssetEntity } from './assetApi'
 
-interface PlogEntity {
+export interface PlogEntity {
   id: number
   content: string
   address: string
@@ -10,7 +10,7 @@ interface PlogEntity {
   userOpenid: string
 }
 
-interface CreatePlogDto {
+export interface CreatePlogDto {
   content: string
   address: string
 }
@@ -19,7 +19,7 @@ const create = (data: CreatePlogDto) => {
   return reuqest.Post<PlogEntity>('/plog/create', data)
 }
 const getListByPage = (pageIndex: number, pageSize: number) => {
-  return reuqest.Get<PlogEntity[]>('/plog/getListByPage', { pageIndex, pageSize })
+  return reuqest.Post<{ total: number; list: PlogEntity[] }>('/plog/getListByPage', { pageIndex, pageSize })
 }
 const getDetailById = (id: number) => {
   return reuqest.Get<PlogEntity>(`/plog/${id}`)

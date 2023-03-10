@@ -26,7 +26,7 @@ const create = (data: CreateLifeInventoryDto) => {
 }
 
 const getAllList = () => {
-  return reuqest.Get<LifeInventoryEntity[]>('/life-inventory/list')
+  return reuqest.Get<LifeInventoryEntity[]>('/life-inventory/allList')
 }
 
 const getDetailById = (id: number) => {
