@@ -5,12 +5,19 @@ export enum LifeInventoryStatusEnum {
   finish = 'finish'
 }
 
+export enum FontSizeEnum {
+  small = 'small',
+  default = 'default',
+  middle = 'middle',
+  large = 'large'
+}
+
 export interface LifeInventoryEntity {
   id: number
   name: string
   status: LifeInventoryStatusEnum
+  fontSize: FontSizeEnum
   color: string
-  fontSize: number
   lastUpdateTime: string
 }
 
@@ -18,7 +25,7 @@ export interface CreateLifeInventoryDto {
   name: string
   status: LifeInventoryStatusEnum
   color: string
-  fontSize: number
+  fontSize: FontSizeEnum
 }
 
 const create = (data: CreateLifeInventoryDto) => {

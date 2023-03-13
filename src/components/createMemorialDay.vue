@@ -3,11 +3,12 @@
     title="添加纪念日"
     :visible="show"
     :style="{ height: '52vh' }"
-    :lock-scroll="true"
-    closeable
     round
+    lock-scroll
+    destroyOnClose
+    close-on-click-overlay
     position="bottom"
-    @clickCloseIcon="hanldeClose"
+    @clickOverlay="hanldeClose"
   >
     <div class="content">
       <div class="form-item">
@@ -133,12 +134,12 @@ watchEffect(async () => {
 
 const showDatePopup = ref(false)
 const minDate = new Date(1900, 1, 1)
-const maxDate = new Date(2100, 12, 30)
+const maxDate = new Date()
 const currentDate = ref(new Date())
 
 const openSelectDate = () => {
   showDatePopup.value = true
-  currentDate.value = dayjs(formModel.date).toDate()
+  currentDate.value = formModel.date ? dayjs(formModel.date).toDate() : new Date()
 }
 
 const popupConfirm = ({ selectedOptions }) => {

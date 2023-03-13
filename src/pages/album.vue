@@ -1,22 +1,22 @@
 <template>
   <div class="albumPage">
     <nut-grid :border="false">
-      <nut-grid-item>
-        <div class="card">
-          <div class="cover add_box" @click="navCreate">
-            <IconFont name="image" :size="32" color="#2c68ff" />
-            新建相册
-          </div>
-        </div>
-      </nut-grid-item>
       <nut-grid-item v-for="item in albumList" :key="item.id">
         <div class="card" @click="navDetail(item.id)">
           <image :src="item.coverUrl" mode="aspectFill" class="cover" />
           <div class="name">{{ item.name }}</div>
-          <div class="info">xxx张</div>
+          <div class="info">{{ item.assetCount }}张照片/视频</div>
         </div>
       </nut-grid-item>
     </nut-grid>
+    <div class="action">
+      <nut-button size="small" type="info" @click="navCreate">
+        <template #icon>
+          <IconFont name="image" />
+        </template>
+        新建
+      </nut-button>
+    </div>
   </div>
 </template>
 
@@ -24,9 +24,13 @@
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
-import { computed } from 'vue'
+import { computed, watchEffect } from 'vue'
 
 const dataStore = useDataStore()
+
+watchEffect(() => {
+  dataStore.getAlbumList()
+})
 
 const albumList = computed(() => dataStore.albumList)
 
@@ -88,17 +92,17 @@ const navDetail = (id: number) => {
   justify-content: flex-start;
   align-items: center;
 }
-.content {
-  padding: 32px 4px;
-  width: 100%;
-  height: 100%;
-  background-color: #f6f7f8;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
 
 .action {
-  padding: 12px 32vw;
+  position: fixed;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  background-color: #fff;
+  padding: 16px 8vw;
+  box-shadow: 0 6px 15px rgb(0 0 0 / 20%);
 }
 </style>

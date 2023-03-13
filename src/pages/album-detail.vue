@@ -1,14 +1,23 @@
 <template>
   <div class="albumDetailPage">
-    <div class="info">当前相册共320张照片 24条视频</div>
-
+    <div class="header">
+      <div class="desc">
+        {{ detail.desc }}
+      </div>
+      <div class="num-info">
+        当前相册共
+        <span class="num">{{ detail.imagesCount }}</span>
+        张照片
+        <span class="num">{{ detail.videosCount }}</span>
+        条视频
+      </div>
+    </div>
     <div class="content">
-      <div class="date-item">
-        <div class="date">2022/11/29</div>
-
-        <nut-grid :column-num="3" :border="false">
-          <nut-grid-item v-for="(item, index) in imgList" :key="index" @click="openPreview(imgList, index)">
-            <img class="mini_pic" :src="item" />
+      <div class="date-item" v-for="item in detail.groupList">
+        <div class="date">{{ item.date }}</div>
+        <nut-grid :column-num="4" :border="false">
+          <nut-grid-item v-for="(asset, index) in item.list" :key="index" @click="openPreview(item.list, index)">
+            <img class="mini_pic" :src="asset.url" />
           </nut-grid-item>
         </nut-grid>
       </div>
@@ -17,29 +26,47 @@
 </template>
 
 <script lang="ts" setup>
+import albumApi from '@/api/albumApi'
+import { AssetEntity } from '@/api/assetApi'
 import Taro, { useRouter } from '@tarojs/taro'
-import { computed } from 'vue'
-import { ref } from 'vue'
+import { reactive, watchEffect } from 'vue'
+
+interface ListItem {
+  date: string
+  list: AssetEntity[]
+}
+
+interface DataModel {
+  name: string
+  desc: string
+  imagesCount: number
+  videosCount: number
+  groupList: ListItem[]
+}
 
 const Router = useRouter<{ id: string }>()
+const id = Router.params.id
 
-const id = computed(() => Router.params.id)
-
-console.log('id', id)
-
-Taro.setNavigationBarTitle({
-  title: '说说和日志相册'
+const detail = reactive<DataModel>({
+  name: '',
+  desc: '',
+  imagesCount: 0,
+  videosCount: 0,
+  groupList: []
 })
-const imgList = ref([
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky1.webp?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky2.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky3.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky4.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky5.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky8.jpg?x-oss-process=style/images_convert'
-])
-const openPreview = (images: string[], index: number) => {
-  const urls = images.map(it => it.replace('?x-oss-process=style/images_convert', ''))
+
+watchEffect(async () => {
+  if (!id) return
+  const res = await albumApi.getDetailById(+id)
+  detail.name = res.name
+  detail.desc = res.desc
+  Taro.setNavigationBarTitle({
+    title: res.name
+  })
+})
+
+const openPreview = (images: AssetEntity[], index: number) => {
+  const urls = images.map(it => it.url.replace('?x-oss-process=style/images_convert', ''))
   Taro.previewImage({
     current: urls[index],
     urls
@@ -53,13 +80,48 @@ const openPreview = (images: string[], index: number) => {
   min-height: 100vh;
 }
 
+.header {
+  padding: 16px 8vw;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+  border-radius: 12px;
+  color: #fff;
+  .desc {
+    text-align: center;
+    font-size: 14px;
+  }
+  .num-info {
+    display: flex;
+    font-size: 12px;
+    .num {
+      padding: 0 4px;
+      color: royalblue;
+    }
+  }
+}
+
+.date-item {
+  .date {
+    margin-left: 8px;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.64);
+  }
+}
+
 .mini_pic {
   width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 2px;
+  height: auto;
+  aspect-ratio: 1;
 }
 .nut-grid-item__content {
-  padding: 2px;
+  padding: 1px;
+}
+
+.nut-grid-item__text {
+  display: none;
 }
 </style>

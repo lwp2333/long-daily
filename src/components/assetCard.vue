@@ -1,35 +1,48 @@
 <template>
   <div class="assetCard">
-    <image v-if="showType === 'single'" :src="imgList[0]" mode="aspectFill" class="big_pic" />
-    <nut-grid v-if="showType === 'grid'" :gutter="0" :column-num="3" :border="false">
-      <nut-grid-item v-for="(item, index) in imgList" :key="index">
-        <image :src="item" mode="aspectFill" class="mini_pic" />
-      </nut-grid-item>
-    </nut-grid>
-    <nut-grid v-if="showType === 'double'" :gutter="0" :column-num="2" :border="false">
-      <nut-grid-item v-for="(item, index) in imgList" :key="index">
-        <image :src="item" mode="aspectFill" class="mini_pic" />
-      </nut-grid-item>
-    </nut-grid>
+    <template v-if="type === 'images'">
+      <image v-if="showType === 'single'" :src="imgList[0]" mode="aspectFill" class="big_pic" />
+      <nut-grid v-if="showType === 'grid'" :gutter="0" :column-num="3" :border="false">
+        <nut-grid-item v-for="(item, index) in imgList" :key="index">
+          <image :src="item" mode="aspectFill" class="mini_pic" />
+        </nut-grid-item>
+      </nut-grid>
+      <nut-grid v-if="showType === 'double'" :gutter="0" :column-num="2" :border="false">
+        <nut-grid-item v-for="(item, index) in imgList" :key="index">
+          <image :src="item" mode="aspectFill" class="mini_pic" />
+        </nut-grid-item>
+      </nut-grid>
+    </template>
+    <template v-if="type === 'video'"> </template>
+    <template v-if="type === 'audio'">
+      <RecordPlay src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/media/demo.mp3" />
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { AssetEntity, AssetTypeEnum } from '@/api/assetApi'
+import { toRefs } from 'vue'
+import { computed } from 'vue'
+import RecordPlay from './recordPlay.vue'
 
-type ShowType = 'single' | 'double' | 'grid'
+interface Props {
+  assets: AssetEntity[]
+}
+const props = defineProps<Props>()
+const { assets } = toRefs(props)
 
-const imgList = ref([
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky1.webp?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky2.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky3.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky4.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky5.jpg?x-oss-process=style/images_convert',
-  'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/sky8.jpg?x-oss-process=style/images_convert'
-])
+const type = computed(() => {
+  const findImage = assets.value.find(it => it.type === AssetTypeEnum.image)
+  const findVideo = assets.value.find(it => it.type === AssetTypeEnum.video)
+  const findAudio = assets.value.find(it => it.type === AssetTypeEnum.audio)
+  return findImage ? 'images' : findVideo ? 'video' : findAudio ? 'audio' : 'unknown'
+})
 
-const showType = computed<ShowType>(() => {
-  switch (imgList.value.length) {
+const imgList = computed(() => assets.value.filter(it => it.type === AssetTypeEnum.image).map(it => it.url))
+
+const showType = computed(() => {
+  switch (assets.value.length) {
     case 1:
       return 'single'
     case 4:

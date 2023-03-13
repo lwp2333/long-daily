@@ -3,26 +3,24 @@ import { defineStore } from 'pinia'
 
 export enum MediaTypeEnum {}
 
-interface PreviewStoreState {
+interface State {
   imageList: string[]
+  index: number
 }
 
-export const usePreviewStore = defineStore<'previewStore', PreviewStoreState>('previewStore', {
-  state: () => {
+export const usePreviewStore = defineStore('previewStore', {
+  state: (): State => {
     return {
-      imageList: [
-        'https://cdn200.oss-cn-hangzhou.aliyuncs.com/weapp/20230106/2c38.jpg',
-        'https://cdn200.oss-cn-hangzhou.aliyuncs.com/weapp/20230106/2c38.jpg',
-        'https://cdn200.oss-cn-hangzhou.aliyuncs.com/weapp/20230106/2c38.jpg',
-        'https://cdn200.oss-cn-hangzhou.aliyuncs.com/weapp/20230106/2c38.jpg'
-      ]
+      imageList: [],
+      index: 0
     }
   },
   actions: {
-    openPreviewImage(list: string[]) {
-      this.sourceList = list
+    openPreviewImage(list: string[], index: number = 0) {
+      this.imageList = list
+      this.index = index
       Taro.navigateTo({
-        url: '/pages/preview-page'
+        url: '/pages/preview'
       })
     },
     openVideo(url: string) {

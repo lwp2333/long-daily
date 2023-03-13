@@ -13,7 +13,7 @@ interface State {
   plogTotal: number
   albumList: AlbumEntity[]
   memorialDayList: MemorialDayEntity[]
-  lifeInventory: LifeInventoryEntity[]
+  lifeInventoryList: LifeInventoryEntity[]
 }
 
 export const mapGender = {
@@ -38,7 +38,7 @@ export const useDataStore = defineStore('dataStore', {
       plogTotal: 0,
       albumList: [],
       memorialDayList: [],
-      lifeInventory: []
+      lifeInventoryList: []
     }
   },
   actions: {
@@ -93,7 +93,7 @@ export const useDataStore = defineStore('dataStore', {
     },
     async getLifeInventory() {
       const res = await lifeInventoryApi.getAllList()
-      this.lifeInventory = res.map(it => {
+      this.lifeInventoryList = res.map(it => {
         return {
           ...it,
           lastUpdateTime: dayjs(it.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')

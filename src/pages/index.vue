@@ -48,7 +48,7 @@
       <div class="app-item" style="margin-bottom: -12px" @click="navTo('/pages/life-inventory')">
         <svgIcon name="list" :size="36" />
         <div class="name">人生清单</div>
-        <div class="desc">12个</div>
+        <div class="desc">{{ lifeInventoryList.length }}个</div>
       </div>
     </div>
 
@@ -60,6 +60,7 @@
 import useAsset from '@/hooks/useAsset'
 import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
+import { onUnmounted } from 'vue'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const navTo = (url: string) => {
@@ -73,7 +74,7 @@ const gitSad = useAsset('long-sad', 'gif')
 const gitWalk = useAsset('long-walk', 'gif')
 
 const currentGif = ref(gitWalk.value)
-let timer: number
+let timer: NodeJS.Timeout
 const switchGif = (url: string) => {
   currentGif.value = url
   dialogShow.value = false
@@ -90,7 +91,7 @@ const petStyle = reactive({
   bottom: '18vh'
 })
 
-let walkInter: number
+let walkInter: NodeJS.Timeout
 
 const runPet = () => {
   walkInter && clearInterval(walkInter)
@@ -125,9 +126,14 @@ watch(currentGif, () => {
 onMounted(() => {
   runPet()
 })
+onUnmounted(() => {
+  walkInter && clearInterval(walkInter)
+})
 const dataStore = useDataStore()
 const memorialDayList = computed(() => dataStore.memorialDayList)
 const albumList = computed(() => dataStore.albumList)
+
+const lifeInventoryList = computed(() => dataStore.lifeInventoryList)
 </script>
 <style lang="scss">
 .index-page {

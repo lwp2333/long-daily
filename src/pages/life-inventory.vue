@@ -1,28 +1,55 @@
 <template>
   <div class="life-inventory-page">
     <div class="tag-box">
-      <div class="small color-5">small</div>
-      <div class="default color-4">default</div>
-
-      <nut-badge color="transparent" top="22" right="8">
-        <template #icon>
-          <IconFont name="checklist" :size="24" color="#43e97b" />
-        </template>
-        <div class="middle color-3">middle</div>
-      </nut-badge>
-
-      <nut-badge color="transparent" top="22" right="8">
-        <template #icon>
-          <IconFont name="checklist" :size="24" color="#43e97b" />
-        </template>
-        <div class="large color-2">large</div>
-      </nut-badge>
+      <div
+        v-for="item in lifeInventoryList"
+        :key="item.id"
+        :class="getClassNames(item)"
+        @longpress="handleChangeStatus(item)"
+      >
+        {{ item.name }}
+      </div>
     </div>
+    <div class="action">
+      <nut-button size="small" type="info" @click="createShow = true">
+        <template #icon>
+          <IconFont name="add" />
+        </template>
+        新增
+      </nut-button>
+    </div>
+    <CreateLifeInventory v-model:visible="createShow" />
   </div>
 </template>
 
 <script setup lang="ts">
+import lifeInventoryApi, { LifeInventoryStatusEnum, LifeInventoryEntity } from '@/api/lifeInventoryApi'
+import CreateLifeInventory from '@/components/createLifeInventory.vue'
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
+import { computed, ref } from 'vue'
+
+const dataStore = useDataStore()
+
+const lifeInventoryList = computed(() => dataStore.lifeInventoryList)
+
+const getClassNames = (item: LifeInventoryEntity) => {
+  return [item.status === LifeInventoryStatusEnum.finish ? item.color : 'color-0', item.fontSize]
+}
+
+const createShow = ref(false)
+
+const handleChangeStatus = (item: LifeInventoryEntity) => {
+  const nextStatus =
+    item.status === LifeInventoryStatusEnum.finish ? LifeInventoryStatusEnum.unFinish : LifeInventoryStatusEnum.finish
+  lifeInventoryApi
+    .updateById(item.id, {
+      status: nextStatus
+    })
+    .then(() => {
+      dataStore.getLifeInventory()
+    })
+}
 </script>
 
 <style lang="less">
@@ -43,7 +70,7 @@ import { IconFont } from '@nutui/icons-vue-taro'
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      padding: 0px 8px;
+      padding: 0px 4px;
       color: #fff;
       line-height: 28px;
       -webkit-background-clip: text;
@@ -64,6 +91,15 @@ import { IconFont } from '@nutui/icons-vue-taro'
     font-size: 24px;
   }
 
+  .selected {
+    border: 1px solid #495aff;
+    border-radius: 12px;
+  }
+  .color-0 {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%),
+      radial-gradient(at top center, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0.4) 120%) #989898;
+    background-blend-mode: multiply, multiply;
+  }
   .color-1 {
     background-image: linear-gradient(to right, #b3ffab 0%, #12fff7 100%);
   }
@@ -79,5 +115,18 @@ import { IconFont } from '@nutui/icons-vue-taro'
   .color-5 {
     background-image: linear-gradient(to right, #fa709a 0%, #fee140 100%);
   }
+}
+
+.action {
+  position: fixed;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  background-color: #fff;
+  padding: 16px 8vw;
+  box-shadow: 0 6px 15px rgb(0 0 0 / 20%);
 }
 </style>

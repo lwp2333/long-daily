@@ -1,16 +1,16 @@
 export default defineAppConfig({
   pages: [
-    'pages/empty',
+    // 'pages/empty',
     'pages/splash',
     'pages/index',
-    'pages/time-machine',
     'pages/memorial-day',
     'pages/life-inventory',
     'pages/preview',
-    'pages/upload',
     'pages/album',
     'pages/album-create',
     'pages/album-detail',
+    'pages/time-machine',
+    'pages/time-machine-create',
     'pages/my',
     'pages/edit-userInfo'
   ],

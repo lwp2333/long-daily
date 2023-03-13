@@ -1,5 +1,5 @@
 <template>
-  <RecordPlay src="" />
+  <RecordPlay src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/media/demo.mp3" />
 </template>
 
 <script lang="ts" setup>

@@ -7,19 +7,20 @@
 </template>
 
 <script lang="ts" setup>
+import userApi from '@/api/userApi'
 import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
 
 const dataStore = useDataStore()
-await dataStore.initData()
 
-Taro.switchTab({
-  url: '/pages/index'
-})
 const handleAuth = async () => {
   try {
     const res = await Taro.login()
-    console.log(res)
+    await userApi.loginByCode(res.code)
+    await dataStore.initData()
+    Taro.switchTab({
+      url: '/pages/index'
+    })
   } catch (error) {
     console.log(error)
   }

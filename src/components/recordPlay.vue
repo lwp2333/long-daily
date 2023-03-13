@@ -5,7 +5,7 @@
         <IconFont v-if="status === 'stop'" name="voice" />
         <IconFont v-else name="voice" class="nut-icon-am-breathe nut-icon-am-infinite" />
       </template>
-      <span class="duration"> 32 '</span>
+      <span class="duration"> {{ duration }}s</span>
     </nut-button>
   </div>
 </template>
@@ -34,21 +34,30 @@ const curDuration = ref<number>(0)
 
 let AudioCtx: Taro.InnerAudioContext
 
+const getDuration = () => {
+  if (AudioCtx.duration) {
+    duration.value = Number(AudioCtx.duration.toFixed(0))
+  } else {
+    setTimeout(() => {
+      getDuration()
+    }, 0)
+  }
+}
+
 const init = (url: string) => {
   AudioCtx = Taro.createInnerAudioContext()
-  AudioCtx.volume = 0.8
+  AudioCtx.volume = 1
   AudioCtx.src = url
   AudioCtx.onPlay(() => {
     status.value = 'playing'
   })
-  AudioCtx.onCanplay(() => {
-    duration.value = AudioCtx.duration
-  })
-  AudioCtx.onStop(() => {
+  AudioCtx.onCanplay(getDuration)
+  AudioCtx.onEnded(() => {
+    console.log('放完了啊')
     status.value = 'stop'
   })
   AudioCtx.onTimeUpdate(() => {
-    curDuration.value = AudioCtx.currentTime
+    curDuration.value = Number(AudioCtx.currentTime.toFixed(0))
   })
 }
 
@@ -62,11 +71,9 @@ onUnmounted(() => {
 
 const handlePlayOrStop = () => {
   if (status.value === 'playing') {
-    status.value = 'stop'
-    // AudioCtx.stop()
+    AudioCtx.stop()
   } else {
-    status.value = 'playing'
-    // AudioCtx.play()
+    AudioCtx.play()
   }
 }
 </script>

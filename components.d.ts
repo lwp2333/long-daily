@@ -8,11 +8,11 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AssetCard: typeof import('./src/components/assetCard.vue')['default']
+    CreateLifeInventory: typeof import('./src/components/createLifeInventory.vue')['default']
     CreateMemorialDay: typeof import('./src/components/createMemorialDay.vue')['default']
     NutActionSheet: typeof import('@nutui/nutui-taro')['ActionSheet']
     NutAnimate: typeof import('@nutui/nutui-taro')['Animate']
     NutAvatar: typeof import('@nutui/nutui-taro')['Avatar']
-    NutBadge: typeof import('@nutui/nutui-taro')['Badge']
     NutButton: typeof import('@nutui/nutui-taro')['Button']
     NutCell: typeof import('@nutui/nutui-taro')['Cell']
     NutCellGroup: typeof import('@nutui/nutui-taro')['CellGroup']
@@ -26,11 +26,13 @@ declare module '@vue/runtime-core' {
     NutPopup: typeof import('@nutui/nutui-taro')['Popup']
     NutRadio: typeof import('@nutui/nutui-taro')['Radio']
     NutRadioGroup: typeof import('@nutui/nutui-taro')['RadioGroup']
+    NutRate: typeof import('@nutui/nutui-taro')['Rate']
     NutSwiper: typeof import('@nutui/nutui-taro')['Swiper']
     NutSwiperItem: typeof import('@nutui/nutui-taro')['SwiperItem']
     NutTextarea: typeof import('@nutui/nutui-taro')['Textarea']
-    RecordCard: typeof import('./src/components/recordCard.vue')['default']
+    Recorder: typeof import('./src/components/recorder.vue')['default']
     RecordPlay: typeof import('./src/components/recordPlay.vue')['default']
+    SelectAlbum: typeof import('./src/components/selectAlbum.vue')['default']
     SvgIcon: typeof import('./src/components/svgIcon.vue')['default']
   }
 }
