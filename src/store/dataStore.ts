@@ -8,6 +8,7 @@ import { defineStore } from 'pinia'
 
 interface State {
   allInit: boolean
+  token: string
   userInfo: UserEntity
   plogList: PlogEntity[]
   plogTotal: number
@@ -26,6 +27,7 @@ export const useDataStore = defineStore('dataStore', {
   state: (): State => {
     return {
       allInit: false,
+      token: '',
       userInfo: {
         openid: 'oqy5602kT2ptTR4NmbbbM-xkP3ZA',
         nickName: '',
@@ -42,10 +44,16 @@ export const useDataStore = defineStore('dataStore', {
     }
   },
   actions: {
+    async login(code: string) {
+      const res = await userApi.loginByCode(code)
+      const { token, ...userInfo } = res
+      this.token = res.token
+      this.userInfo = userInfo
+    },
     async initData() {
       if (this.allInit) return
       await Promise.all([
-        this.getUserInfo(),
+        // this.getUserInfo(),
         this.getPlogList(),
         this.getAlbumList(),
         this.getMemorialDayData(),

@@ -5,7 +5,7 @@ export enum GenderEnum {
   female = 'female',
   male = 'male'
 }
-export interface LoginEntity {
+export interface LoginEntity extends UserEntity {
   token: string
 }
 export interface UserEntity {

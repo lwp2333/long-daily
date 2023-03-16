@@ -1,13 +1,11 @@
 <template>
-  <div class="recordPlay">
-    <nut-button type="primary" @click="handlePlayOrStop">
-      <template #icon>
-        <IconFont v-if="status === 'stop'" name="voice" />
-        <IconFont v-else name="voice" class="nut-icon-am-breathe nut-icon-am-infinite" />
-      </template>
-      <span class="duration"> {{ duration }}s</span>
-    </nut-button>
-  </div>
+  <nut-button type="info" @click="handlePlayOrStop">
+    <template #icon>
+      <IconFont v-if="status === 'stop'" name="voice" />
+      <IconFont v-else name="voice" class="nut-icon-am-breathe nut-icon-am-infinite" />
+    </template>
+    <span class="duration"> {{ duration }}s</span>
+  </nut-button>
 </template>
 
 <script lang="ts" setup>
@@ -79,14 +77,8 @@ const handlePlayOrStop = () => {
 </script>
 
 <style lang="scss">
-.recordPlay {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .duration {
-  margin-left: 32px;
+  width: 120px;
+  text-align: end;
 }
 </style>

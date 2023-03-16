@@ -1,5 +1,5 @@
 import reuqest from './reuqest'
-import { AssetEntity } from './assetApi'
+import { AssetEntity, CreateAssetDto } from './assetApi'
 
 export interface PlogEntity {
   id: number
@@ -10,9 +10,12 @@ export interface PlogEntity {
   userOpenid: string
 }
 
+export interface CreateAssetsInPlogDto extends Omit<CreateAssetDto, 'plodId'> {}
+
 export interface CreatePlogDto {
   content: string
   address: string
+  assets: CreateAssetsInPlogDto[]
 }
 
 const create = (data: CreatePlogDto) => {

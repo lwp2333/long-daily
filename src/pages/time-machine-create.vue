@@ -1,17 +1,16 @@
 <template>
   <div class="time-machine-create">
-    <nut-textarea v-model="formModel.content" limit-show :max-length="120" placeholder="记下此刻的欢喜～" />
-    <div class="type-box">
-      <div class="type-item"><IconFont name="image" :size="12" color="#0066ff" />相册/拍摄</div>
-      <div class="type-item"><IconFont name="play-start" :size="12" color="#0066ff" />视频</div>
+    <div class="banner">
+      <span>时光机，祝你天天开心！</span>
+      <SvgIcon name="earth" :size="88" />
+    </div>
+    <nut-textarea v-model="formModel.content" limit-show :max-length="120" placeholder="记录下此刻的欢喜吧～" />
+    <div v-if="showType" class="type-box">
+      <div class="type-item" @click="choosePhotos"><IconFont name="image" :size="12" color="#0066ff" />相册</div>
+      <div class="type-item" @click="chooseVideo"><IconFont name="play-start" :size="12" color="#0066ff" />视频</div>
       <div class="type-item" @click="openRecoder"><IconFont name="microphone" :size="12" color="#0066ff" />录音</div>
     </div>
-    <div class="upload-box">
-      <div class="add">
-        <IconFont name="image" :size="20" />
-      </div>
-    </div>
-    <nut-cell-group>
+    <nut-cell-group v-if="imgCacheList.length || videoCacheList.length">
       <nut-cell title="上传到">
         <template v-slot:link>
           <div class="cell-right" @click="openSelectAlbum">
@@ -27,32 +26,63 @@
         </template>
       </nut-cell>
     </nut-cell-group>
+    <div v-if="imgCacheList.length" class="upload-box">
+      <nut-grid :gutter="0" :column-num="3" :border="false">
+        <nut-grid-item v-for="(item, index) in imgCacheList" :key="index">
+          <image :src="item.tempFilePath" mode="aspectFill" class="mini_pic" @click="handlePreview(index)" />
+        </nut-grid-item>
+        <nut-grid-item v-if="imgCacheList.length < 9">
+          <div class="add" @click="choosePhotos">
+            <IconFont name="uploader" :size="24" color="#ccc" />
+          </div>
+        </nut-grid-item>
+      </nut-grid>
+    </div>
 
-    <RecordPlay v-if="recorderModel" :src="recorderModel.tempFilePath" />
+    <div v-if="videoCacheList.length" class="video-box">
+      <nut-grid :gutter="0" :column-num="3" :border="false">
+        <nut-grid-item v-for="(item, index) in videoCacheList" :key="index">
+          <div class="video-item" @click="handlePreviewVideo(index)">
+            <!-- 视频封面 -->
+            <image :src="item.thumbTempFilePath" mode="aspectFill" class="video_pic" />
+            <div class="mask">
+              <IconFont name="play-start" :size="12" color="#fff" />
+            </div>
+          </div>
+        </nut-grid-item>
+      </nut-grid>
+    </div>
+
+    <div v-if="audioCache" class="audio-box">
+      <RecordPlay :src="audioCache.tempFilePath" />
+    </div>
 
     <div class="action">
-      <nut-button block type="info">发布</nut-button>
+      <nut-button block type="info" @click="openConfirmShow">发布</nut-button>
     </div>
     <!-- 选择相册 -->
-    <selectAlbum v-model="formModel.albumId" v-model:visible="selectAlbumShow" />
+    <selectAlbum v-model="albumId" v-model:visible="selectAlbumShow" />
     <!-- 录音 -->
     <Recorder v-model:visible="recorderShow" @change="handleRecorderChange" />
+
+    <!-- 确定保存 -->
+    <nut-dialog content="确定删除嘛？" v-model:visible="confirmShow" @cancel="confirmShow = false" @ok="saveConfirm" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { AssetTypeEnum } from '@/api/assetApi'
+import plogApi, { CreateAssetsInPlogDto, CreatePlogDto } from '@/api/plogApi'
 import RecordPlay from '@/components/recordPlay.vue'
 import Recorder from '@/components/recorder.vue'
 import selectAlbum from '@/components/selectAlbum.vue'
+import SvgIcon from '@/components/svgIcon.vue'
+import useUpload from '@/hooks/useUpload'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
+import Taro from '@tarojs/taro'
+import { watchEffect } from 'vue'
 import { computed, reactive, ref } from 'vue'
-
-interface FormModel {
-  content: string
-  fileList: { url: string; uid: string }[]
-  albumId: number
-}
 
 interface RecorderItem {
   duration: number
@@ -63,30 +93,163 @@ interface RecorderItem {
 const dataStore = useDataStore()
 const albumList = computed(() => dataStore.albumList)
 
-const formModel = reactive<FormModel>({
+const albumId = ref<number>(0)
+const formModel = reactive<CreatePlogDto>({
   content: '',
-  fileList: [],
-  albumId: 0
+  address: '',
+  assets: []
 })
 
-// 选择相册
+const imgCacheList = ref<Taro.chooseMedia.ChooseMedia[]>([])
+const videoCacheList = ref<Taro.chooseMedia.ChooseMedia[]>([])
+const audioCache = ref<RecorderItem>()
+
+const showType = computed(() => !imgCacheList.value.length && !videoCacheList.value.length && !audioCache.value)
+
+const { startUpload, startUploadMutile } = useUpload()
+
+// 照片
+const choosePhotos = async () => {
+  const res = await Taro.chooseMedia({
+    mediaType: ['image'],
+    sizeType: ['original', 'compressed'],
+    sourceType: ['album', 'camera'],
+    count: 9 - imgCacheList.value.length
+  })
+  Taro.showLoading({
+    title: '上传中...'
+  })
+  const urlList = await startUploadMutile(res.tempFiles.map(it => it.tempFilePath))
+  imgCacheList.value.push(
+    ...res.tempFiles.map((it, index) => {
+      return {
+        ...it,
+        tempFilePath: urlList[index]
+      }
+    })
+  )
+  Taro.hideLoading()
+}
+
+// 预览本地缓存图
+const handlePreview = (index: number) => {
+  const urls = imgCacheList.value.map(it => it.tempFilePath)
+  Taro.previewImage({
+    current: urls[index],
+    urls
+  })
+}
+// 视频
+const chooseVideo = async () => {
+  const res = await Taro.chooseMedia({
+    mediaType: ['video'],
+    sizeType: ['original', 'compressed'],
+    sourceType: ['album', 'camera'],
+    count: 1
+  })
+  Taro.showLoading({
+    title: '上传中...'
+  })
+  const urlList = await startUploadMutile(res.tempFiles.map(it => it.tempFilePath))
+  videoCacheList.value = res.tempFiles.map((it, index) => {
+    return {
+      ...it,
+      tempFilePath: urlList[index]
+    }
+  })
+  Taro.hideLoading()
+}
+// 预览本地缓存视频
+const handlePreviewVideo = (index: number) => {
+  const url = videoCacheList.value[index].tempFilePath
+  const poster = videoCacheList.value[index].thumbTempFilePath
+  Taro.previewMedia({
+    sources: [{ type: 'video', url, poster }]
+  }).catch(error => {
+    console.log(error)
+  })
+}
+// 录音
+const recorderShow = ref(false)
+const openRecoder = () => {
+  recorderShow.value = true
+}
+const handleRecorderChange = async (record: RecorderItem) => {
+  Taro.showLoading({
+    title: '上传中...'
+  })
+  const url = await startUpload(record.tempFilePath)
+  record.tempFilePath = url
+  audioCache.value = record
+  Taro.hideLoading()
+}
+
+// 选择相册组
 const selectAlbumShow = ref(false)
 const albumInfo = computed(() => {
-  return albumList.value.find(it => it.id === formModel.albumId)
+  return albumList.value.find(it => it.id === albumId.value)
 })
 const openSelectAlbum = () => {
   selectAlbumShow.value = true
 }
 
-// 打开录音
-const recorderShow = ref(false)
+watchEffect(() => {
+  const allList: CreateAssetsInPlogDto[] = []
+  if (imgCacheList.value.length) {
+    allList.push(
+      ...imgCacheList.value.map((it, index) => {
+        return {
+          url: it.tempFilePath,
+          type: AssetTypeEnum.image,
+          size: it.size,
+          sort: index + 1,
+          albumId: albumId.value!
+        }
+      })
+    )
+  }
+  if (videoCacheList.value.length) {
+    allList.push(
+      ...videoCacheList.value.map((it, index) => {
+        return {
+          url: it.tempFilePath,
+          type: AssetTypeEnum.video,
+          size: it.size,
+          sort: index + 1,
+          albumId: albumId.value!
+        }
+      })
+    )
+  }
+  if (audioCache.value) {
+    allList.push({
+      url: audioCache.value.tempFilePath,
+      type: AssetTypeEnum.video,
+      size: audioCache.value.fileSize,
+      sort: 1,
+      albumId: 1008611
+    })
+  }
+  formModel.assets = allList
+})
 
-const recorderModel = ref<RecorderItem>()
-const openRecoder = () => {
-  recorderShow.value = true
+const confirmShow = ref(false)
+const openConfirmShow = () => {
+  if (!formModel.content && !formModel.assets.length) {
+    Taro.showToast({
+      title: '请输内容或上传照片/视频/语音'
+    })
+    return
+  }
+
+  if (imgCacheList.value.length || videoCacheList.value) confirmShow.value = true
 }
-const handleRecorderChange = (record: RecorderItem) => {
-  recorderModel.value = record
+const saveConfirm = async () => {
+  Taro.showLoading({
+    title: '正在保存...'
+  })
+  await plogApi.create(formModel)
+  Taro.hideLoading()
 }
 </script>
 <style lang="scss">
@@ -94,9 +257,10 @@ const handleRecorderChange = (record: RecorderItem) => {
   width: 100%;
   min-height: 100vh;
   background-color: #f6f7f8;
+  padding-top: 4px;
   padding-left: 4px;
   padding-right: 4px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  padding-bottom: calc(32px + env(safe-area-inset-bottom));
 }
 
 .gray-text {
@@ -126,7 +290,7 @@ const handleRecorderChange = (record: RecorderItem) => {
   border-radius: 8px;
   background-color: #fff;
   .add {
-    width: calc((100vw - 36px) / 3);
+    width: 100%;
     height: auto;
     aspect-ratio: 1;
     border-radius: 4px;
@@ -136,6 +300,38 @@ const handleRecorderChange = (record: RecorderItem) => {
     align-items: center;
     &:not(:last-child) {
       margin-right: 2px;
+    }
+  }
+  .mini_pic {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
+
+.video-box {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #fff;
+  .video-item {
+    position: relative;
+    width: 100%;
+    line-height: 0;
+    .video_pic {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+    }
+    .mask {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, 0.28);
     }
   }
 }
@@ -150,7 +346,7 @@ const handleRecorderChange = (record: RecorderItem) => {
 }
 
 .type-box {
-  padding: 12px 16px;
+  padding: 12px;
   background-color: #fff;
   border-top: 1px solid #f6f7f8;
   display: flex;
@@ -159,8 +355,9 @@ const handleRecorderChange = (record: RecorderItem) => {
 }
 .type-item {
   padding: 4px 8px;
+  width: 52px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   font-size: 10px;
   border-radius: 8px;
@@ -169,5 +366,35 @@ const handleRecorderChange = (record: RecorderItem) => {
   &:not(:last-child) {
     margin-right: 12px;
   }
+}
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.nut-grid-item__content {
+  padding: 1px;
+}
+
+.nut-grid-item__text {
+  display: none;
+}
+
+.nut-textarea {
+  padding: 12px;
+  font-size: 16px;
+}
+
+.audio-box {
+  padding: 12px;
+  background-color: #fff;
 }
 </style>

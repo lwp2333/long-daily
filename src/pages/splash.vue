@@ -7,17 +7,25 @@
 </template>
 
 <script lang="ts" setup>
-import userApi from '@/api/userApi'
 import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
+import { onBeforeMount } from 'vue'
 
 const dataStore = useDataStore()
+
+onBeforeMount(() => {
+  if (dataStore.token) {
+    Taro.switchTab({
+      url: '/pages/index'
+    })
+  }
+})
 
 const handleAuth = async () => {
   try {
     const res = await Taro.login()
-    await userApi.loginByCode(res.code)
-    await dataStore.initData()
+    await dataStore.login(res.code)
+    dataStore.initData()
     Taro.switchTab({
       url: '/pages/index'
     })
