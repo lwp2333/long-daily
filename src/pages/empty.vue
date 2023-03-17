@@ -1,9 +1,7 @@
 <template>
-  <RecordPlay src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/media/demo.mp3" />
+  <div class="banner-edit-page"></div>
 </template>
 
-<script lang="ts" setup>
-import RecordPlay from '@/components/recordPlay.vue'
-</script>
+<script lang="ts" setup></script>
 
 <style lang="scss"></style>

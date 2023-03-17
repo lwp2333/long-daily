@@ -1,10 +1,6 @@
 <template>
   <div class="time-machine-page">
-    <nut-swiper :init-page="swiperState.page" :pagination-visible="true" pagination-color="#426543" auto-play="3000">
-      <nut-swiper-item v-for="item in swiperState.bannerList" :key="item">
-        <image :src="item" mode="aspectFill" class="banner" />
-      </nut-swiper-item>
-    </nut-swiper>
+    <BannerCard v-bind="swiperState" />
     <div class="content">
       <div class="plog-card" v-for="item in [1, 2, 3, 4]" :key="item">
         <div class="top">
@@ -25,37 +21,35 @@
       </div>
     </div>
   </div>
+  <div class="fab-btn">
+    <nut-button shape="round" type="info" @click="navCreate">
+      <template #icon>
+        <IconFont name="uploader" />
+      </template>
+    </nut-button>
+  </div>
   <nut-action-sheet
     v-model:visible="actionState.show"
     :menu-items="(actionState.menuItems as any)"
     cancel-txt="取消"
     @choose="selected"
-  >
-  </nut-action-sheet>
+  />
 </template>
 
 <script lang="ts" setup>
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
-import { onMounted, reactive, ref } from 'vue'
+import { reactive } from 'vue'
+import BannerCard from '@/components/bannerCard.vue'
 import AssetCard from '@/components/assetCard.vue'
-// import useAsset from '@/hooks/useAsset'
-interface SwiperState {
-  page: number
-  bannerList: string[]
-}
-const swiperState = reactive<SwiperState>({
-  page: 1,
-  bannerList: [] as string[]
-})
-onMounted(() => {
-  setTimeout(() => {
-    swiperState.bannerList = [
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner1.jpg',
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner2.jpg',
-      'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner3.jpg'
-    ]
-  }, 320)
+
+const swiperState = reactive({
+  initPage: 1,
+  list: [
+    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner1.jpg',
+    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner2.jpg',
+    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner3.jpg'
+  ]
 })
 
 const actionState = reactive({
@@ -81,6 +75,12 @@ const selected = (item: unknown) => {
   console.log(item)
   Taro.vibrateLong()
 }
+
+const navCreate = () => {
+  Taro.navigateTo({
+    url: '/pages/time-machine-create'
+  })
+}
 </script>
 <style lang="scss">
 .time-machine-page {
@@ -90,19 +90,6 @@ const selected = (item: unknown) => {
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 
-.nut-swiper-item {
-  padding: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff;
-}
-
-.banner {
-  width: calc(100% - 8px);
-  height: 200px;
-  border-radius: 12px;
-}
 .content {
   padding: 8px;
   width: 100%;
@@ -143,7 +130,9 @@ const selected = (item: unknown) => {
   }
 }
 
-.popclass {
-  padding-bottom: 36px;
+.fab-btn {
+  position: fixed;
+  right: 12px;
+  bottom: calc(32px + env(safe-area-inset-bottom));
 }
 </style>

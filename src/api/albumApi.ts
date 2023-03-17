@@ -1,3 +1,4 @@
+import { AssetEntity } from './assetApi'
 import reuqest from './reuqest'
 
 export interface AlbumEntity {
@@ -7,6 +8,12 @@ export interface AlbumEntity {
   coverUrl: string
   assetCount: string
   lastUpdateTime: string
+}
+
+export interface AlbumDetailEntity extends AlbumEntity {
+  imagesCount: number
+  videosCount: number
+  groupList: { date: string; list: AssetEntity[] }[]
 }
 
 export interface CreateAlbumDto {
@@ -24,7 +31,7 @@ const getList = () => {
 }
 
 const getDetailById = (id: number) => {
-  return reuqest.Get<AlbumEntity>(`/album/${id}`)
+  return reuqest.Get<AlbumDetailEntity>(`/album/${id}`)
 }
 
 const updateById = (id: number, data: Partial<CreateAlbumDto>) => {

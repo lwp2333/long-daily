@@ -27,6 +27,7 @@
         <span class="num">{{ item.days }}天</span>
       </div>
     </template>
+    <nut-empty v-if="!list.length" description="快开始添加纪念日吧！" />
   </div>
 
   <div class="fixed-action" @click="openCreate">
@@ -196,5 +197,9 @@ const hanldeDelConfirm = () => {
   background-color: #fff;
   line-height: 0;
   border-radius: 12px;
+}
+
+.nut-empty__description {
+  color: #fff;
 }
 </style>

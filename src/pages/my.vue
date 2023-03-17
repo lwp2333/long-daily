@@ -2,7 +2,7 @@
   <div class="myPage">
     <div class="header">
       <div class="top">
-        <img :src="userInfo.avatar" class="avatar" />
+        <image :src="userInfo.avatar" mode="aspectFill" class="avatar" />
         <div class="right">
           <div class="nickName">{{ userInfo.nickName }}</div>
           <div class="signature">{{ userInfo.signature }}</div>
@@ -22,12 +22,12 @@
     </div>
 
     <nut-cell-group>
-      <nut-cell title="个人信息" is-link @click="handleNav('/pages/edit-userInfo')"></nut-cell>
-      <nut-cell title="设置轮播图" is-link></nut-cell>
-      <nut-cell title="回收站" is-link></nut-cell>
-      <nut-cell title="关于小程序" is-link></nut-cell>
+      <nut-cell title="个人信息" is-link @click="handleNav('/pages/edit-userInfo')" />
+      <nut-cell title="设置轮播图" is-link @click="handleNav('/pages/banner-setting')" />
+      <nut-cell title="回收站" is-link @click="waiting" />
+      <nut-cell title="关于小程序" is-link />
     </nut-cell-group>
-    <nut-cell title="空间切换" is-link></nut-cell>
+    <nut-cell title="空间切换" is-link @click="waiting" />
   </div>
 </template>
 
@@ -44,6 +44,12 @@ const userInfo = computed(() => dataStore.userInfo)
 const handleNav = (url: string) => {
   Taro.navigateTo({
     url
+  })
+}
+
+const waiting = () => {
+  Taro.showToast({
+    title: '敬请期待！'
   })
 }
 </script>
@@ -132,7 +138,6 @@ const handleNav = (url: string) => {
 .avatar {
   width: 48px;
   height: 48px;
-  object-fit: contain;
   border-radius: 50%;
 }
 </style>

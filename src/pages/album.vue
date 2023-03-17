@@ -1,6 +1,6 @@
 <template>
   <div class="albumPage">
-    <nut-grid :border="false">
+    <nut-grid v-if="albumList.length" :border="false">
       <nut-grid-item v-for="item in albumList" :key="item.id">
         <div class="card" @click="navDetail(item.id)">
           <image :src="item.coverUrl" mode="aspectFill" class="cover" />
@@ -9,6 +9,7 @@
         </div>
       </nut-grid-item>
     </nut-grid>
+    <nut-empty v-else description="快开始添加纪念日吧！" />
     <div class="action">
       <nut-button size="small" type="info" @click="navCreate">
         <template #icon>
@@ -24,13 +25,9 @@
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
-import { computed, watchEffect } from 'vue'
+import { computed } from 'vue'
 
 const dataStore = useDataStore()
-
-watchEffect(() => {
-  dataStore.getAlbumList()
-})
 
 const albumList = computed(() => dataStore.albumList)
 
@@ -49,6 +46,7 @@ const navDetail = (id: number) => {
 <style lang="scss">
 .albumPage {
   padding: 4px 8px;
+  padding-bottom: 64px;
   width: 100%;
   min-height: 100vh;
   font-size: 12px;

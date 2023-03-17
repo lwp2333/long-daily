@@ -1,7 +1,7 @@
 <template>
   <div class="index-page">
     <div class="user-info">
-      <image class="avatar" mode="aspectFill" src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/chun.png" />
+      <image class="avatar" mode="aspectFill" :src="userInfo.avatar" />
       <div class="desc">
         <span class="label">入驻已经</span>
         <span class="days-num">
@@ -130,9 +130,9 @@ onUnmounted(() => {
   walkInter && clearInterval(walkInter)
 })
 const dataStore = useDataStore()
+const userInfo = computed(() => dataStore.userInfo)
 const memorialDayList = computed(() => dataStore.memorialDayList)
 const albumList = computed(() => dataStore.albumList)
-
 const lifeInventoryList = computed(() => dataStore.lifeInventoryList)
 </script>
 <style lang="scss">
@@ -166,7 +166,7 @@ const lifeInventoryList = computed(() => dataStore.lifeInventoryList)
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 1px solid #ee609c;
+    border: 1px solid #0066ff;
   }
   .desc {
     flex: 1;

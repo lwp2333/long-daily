@@ -1,6 +1,6 @@
 <template>
   <div class="life-inventory-page">
-    <div class="tag-box">
+    <div v-if="lifeInventoryList.length" class="tag-box">
       <div
         v-for="item in lifeInventoryList"
         :key="item.id"
@@ -10,6 +10,7 @@
         {{ item.name }}
       </div>
     </div>
+    <nut-empty v-else description="快开始添加人生清单吧！" />
     <div class="action">
       <nut-button size="small" type="info" @click="createShow = true">
         <template #icon>

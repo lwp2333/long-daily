@@ -1,5 +1,5 @@
 <template>
-  <div class="albumDetailPage">
+  <div v-if="detail" class="albumDetailPage">
     <div class="header">
       <div class="desc">
         {{ detail.desc }}
@@ -15,67 +15,33 @@
     <div class="content">
       <div class="date-item" v-for="item in detail.groupList">
         <div class="date">{{ item.date }}</div>
-        <nut-grid :column-num="4" :border="false">
-          <nut-grid-item v-for="(asset, index) in item.list" :key="index" @click="openPreview(item.list, index)">
-            <img class="mini_pic" :src="asset.url" />
-          </nut-grid-item>
-        </nut-grid>
+        <AssetCard :assets="item.list" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import albumApi from '@/api/albumApi'
-import { AssetEntity } from '@/api/assetApi'
+import albumApi, { AlbumDetailEntity } from '@/api/albumApi'
+import AssetCard from '@/components/assetCard.vue'
 import Taro, { useRouter } from '@tarojs/taro'
-import { reactive, watchEffect } from 'vue'
-
-interface ListItem {
-  date: string
-  list: AssetEntity[]
-}
-
-interface DataModel {
-  name: string
-  desc: string
-  imagesCount: number
-  videosCount: number
-  groupList: ListItem[]
-}
+import { ref, watchEffect } from 'vue'
 
 const Router = useRouter<{ id: string }>()
 const id = Router.params.id
 
-const detail = reactive<DataModel>({
-  name: '',
-  desc: '',
-  imagesCount: 0,
-  videosCount: 0,
-  groupList: []
-})
+const detail = ref<AlbumDetailEntity>()
 
 watchEffect(async () => {
   if (!id) return
-  const res = await albumApi.getDetailById(+id)
-  detail.name = res.name
-  detail.desc = res.desc
+  detail.value = await albumApi.getDetailById(+id)
   Taro.setNavigationBarTitle({
-    title: res.name
+    title: detail.value.name
   })
 })
-
-const openPreview = (images: AssetEntity[], index: number) => {
-  const urls = images.map(it => it.url.replace('?x-oss-process=style/images_convert', ''))
-  Taro.previewImage({
-    current: urls[index],
-    urls
-  })
-}
 </script>
 <style lang="scss">
 .albumDetailPage {
-  padding: 4px 8px;
   width: 100%;
   min-height: 100vh;
 }
@@ -87,21 +53,25 @@ const openPreview = (images: AssetEntity[], index: number) => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
-  border-radius: 12px;
+  background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
   color: #fff;
   .desc {
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
   }
   .num-info {
     display: flex;
-    font-size: 12px;
+    font-size: 14px;
     .num {
       padding: 0 4px;
       color: royalblue;
     }
   }
+}
+
+.content {
+  margin-top: 32px;
+  padding: 8px;
 }
 
 .date-item {

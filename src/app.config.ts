@@ -12,7 +12,8 @@ export default defineAppConfig({
     'pages/time-machine',
     'pages/time-machine-create',
     'pages/my',
-    'pages/edit-userInfo'
+    'pages/edit-userInfo',
+    'pages/banner-setting'
   ],
   tabBar: {
     color: '#000',

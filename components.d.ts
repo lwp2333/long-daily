@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AssetCard: typeof import('./src/components/assetCard.vue')['default']
+    BannerCard: typeof import('./src/components/bannerCard.vue')['default']
     CreateLifeInventory: typeof import('./src/components/createLifeInventory.vue')['default']
     CreateMemorialDay: typeof import('./src/components/createMemorialDay.vue')['default']
     NutActionSheet: typeof import('@nutui/nutui-taro')['ActionSheet']
@@ -19,6 +20,7 @@ declare module '@vue/runtime-core' {
     NutCountdown: typeof import('@nutui/nutui-taro')['Countdown']
     NutDatePicker: typeof import('@nutui/nutui-taro')['DatePicker']
     NutDialog: typeof import('@nutui/nutui-taro')['Dialog']
+    NutEmpty: typeof import('@nutui/nutui-taro')['Empty']
     NutGrid: typeof import('@nutui/nutui-taro')['Grid']
     NutGridItem: typeof import('@nutui/nutui-taro')['GridItem']
     NutInput: typeof import('@nutui/nutui-taro')['Input']
