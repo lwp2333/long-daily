@@ -66,7 +66,13 @@
     <Recorder v-model:visible="recorderShow" @change="handleRecorderChange" />
 
     <!-- 确定保存 -->
-    <nut-dialog content="确定删除嘛？" v-model:visible="confirmShow" @cancel="confirmShow = false" @ok="saveConfirm" />
+    <nut-dialog
+      content="确定发布嘛？"
+      v-model:visible="confirmShow"
+      footer-direction="vertical"
+      @cancel="confirmShow = false"
+      @ok="saveConfirm"
+    />
   </div>
 </template>
 
@@ -74,7 +80,7 @@
 import { AssetTypeEnum } from '@/api/assetApi'
 import plogApi, { CreateAssetsInPlogDto, CreatePlogDto } from '@/api/plogApi'
 import RecordPlay from '@/components/recordPlay.vue'
-import Recorder from '@/components/recorder.vue'
+import Recorder, { RecorderItem } from '@/components/recorder.vue'
 import selectAlbum from '@/components/selectAlbum.vue'
 import SvgIcon from '@/components/svgIcon.vue'
 import useToast from '@/hooks/useToast'
@@ -83,12 +89,6 @@ import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
 import { computed, reactive, ref, watchEffect } from 'vue'
-
-interface RecorderItem {
-  duration: number
-  fileSize: number
-  tempFilePath: string
-}
 
 const dataStore = useDataStore()
 const albumList = computed(() => dataStore.albumList)
@@ -152,10 +152,12 @@ const chooseVideo = async () => {
     title: '上传中...'
   })
   const urlList = await startUploadMutile(res.tempFiles.map(it => it.tempFilePath))
+  const posterUrlList = await startUploadMutile(res.tempFiles.map(it => it.thumbTempFilePath))
   videoCacheList.value = res.tempFiles.map((it, index) => {
     return {
       ...it,
-      tempFilePath: urlList[index]
+      tempFilePath: urlList[index],
+      thumbTempFilePath: posterUrlList[index]
     }
   })
   Taro.hideLoading()
@@ -212,6 +214,7 @@ watchEffect(() => {
       ...videoCacheList.value.map((it, index) => {
         return {
           url: it.tempFilePath,
+          poster: it.thumbTempFilePath, // 视频封面
           type: AssetTypeEnum.video,
           size: it.size,
           sort: index + 1,
@@ -223,7 +226,7 @@ watchEffect(() => {
   if (audioCache.value) {
     allList.push({
       url: audioCache.value.tempFilePath,
-      type: AssetTypeEnum.video,
+      type: AssetTypeEnum.audio,
       size: audioCache.value.fileSize,
       sort: 1,
       albumId: -2 // 默认录音组id为-2
@@ -242,16 +245,18 @@ const openConfirmShow = () => {
 }
 
 // 刷新数据 可能影响到的()
-const refreshData = () => {
+const refreshDataAndBack = () => {
   dataStore.getAlbumList()
-  dataStore.getPlogList()
+  dataStore.refreshPlogList()
+  Taro.navigateBack()
 }
 
 const saveConfirm = async () => {
-  showLoading('正在保存...')
+  showLoading('正在发布...')
   await plogApi.create(formModel)
-  refreshData()
-  Taro.hideLoading()
+  refreshDataAndBack()
+  hideLoading()
+  showToast('发布成功')
 }
 </script>
 <style lang="scss">

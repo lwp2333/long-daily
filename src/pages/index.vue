@@ -5,7 +5,7 @@
       <div class="desc">
         <span class="label">入驻已经</span>
         <span class="days-num">
-          132
+          {{ userInfo.registerTime }}
           <span class="unit">天</span>
         </span>
       </div>
@@ -59,8 +59,8 @@
 <script lang="ts" setup>
 import useAsset from '@/hooks/useAsset'
 import { useDataStore } from '@/store/dataStore'
-import Taro from '@tarojs/taro'
-import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import Taro, { useDidHide, useDidShow } from '@tarojs/taro'
+import { computed, reactive, ref, watch } from 'vue'
 
 const navTo = (url: string) => {
   Taro.navigateTo({
@@ -122,10 +122,10 @@ watch(currentGif, () => {
   }
 })
 
-onMounted(() => {
+useDidShow(() => {
   runPet()
 })
-onUnmounted(() => {
+useDidHide(() => {
   walkInter && clearInterval(walkInter)
 })
 const dataStore = useDataStore()

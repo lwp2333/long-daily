@@ -1,8 +1,8 @@
 <template>
   <div class="banner-setting">
-    <BannerCard v-if="flag" v-bind="state" />
+    <BannerCard v-if="flag" :initPge="initPage" :list="list" />
     <div class="list">
-      <div class="item" v-for="(item, index) in state.list" :key="index">
+      <div class="item" v-for="(item, index) in list" :key="index">
         <image :src="item" class="mini-pic" mode="aspectFill" />
         <div class="control-box">
           <nut-button size="small" type="info" :disabled="index === 0" @click="toUp(index)">
@@ -11,7 +11,7 @@
             </template>
             上移
           </nut-button>
-          <nut-button size="small" type="info" :disabled="index === state.list.length - 1" @click="toDown(index)">
+          <nut-button size="small" type="info" :disabled="index === list.length - 1" @click="toDown(index)">
             <template #icon>
               <IconFont name="triangle-down" />
             </template>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <nut-empty v-if="state" description="快立即上传照片吧！" />
+    <nut-empty v-if="!list.length" description="快立即上传照片吧！" />
     <div class="fab-btn">
       <nut-button shape="round" type="info" @click="toUpload">
         <template #icon>
@@ -32,37 +32,47 @@
 </template>
 
 <script lang="ts" setup>
+import userApi from '@/api/userApi'
 import BannerCard from '@/components/bannerCard.vue'
+import useToast from '@/hooks/useToast'
 import useUpload from '@/hooks/useUpload'
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro, { nextTick } from '@tarojs/taro'
-import { reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const state = reactive({
-  initPage: 0,
-  list: [] as string[]
-})
+const { showToast, showLoading, hideLoading } = useToast()
+const dataStore = useDataStore()
+const list = computed(() => dataStore.userInfo.bannerList || [])
+
 const flag = ref(true)
+const initPage = ref(0)
 
-const refreshSwipe = () => {
+const refreshSwipe = async () => {
+  showLoading('更新中...')
+  const bannerList = [...list.value]
+  await userApi.updateUserInfo({ bannerList })
+  await dataStore.getUserInfo()
   flag.value = false
   nextTick(() => {
-    state.initPage = 0
+    hideLoading()
+    showToast('更新成功')
+    initPage.value = 0
     flag.value = true
   })
 }
 
 const toDown = (index: number) => {
-  const temp = state.list[index]
-  state.list[index] = state.list[index + 1]
-  state.list[index + 1] = temp
+  const temp = list.value[index]
+  list.value[index] = list.value[index + 1]
+  list.value[index + 1] = temp
   refreshSwipe()
 }
 
 const toUp = (index: number) => {
-  const temp = state.list[index]
-  state.list[index] = state.list[index - 1]
-  state.list[index - 1] = temp
+  const temp = list.value[index]
+  list.value[index] = list.value[index - 1]
+  list.value[index - 1] = temp
   refreshSwipe()
 }
 
@@ -77,7 +87,8 @@ const toUpload = () => {
         cropScale: '16:9' as any
       })
       const url = await startUpload(cropInfo.tempFilePath)
-      state.list.push(url)
+      list.value.push(url)
+      refreshSwipe()
     }
   })
 }

@@ -13,6 +13,7 @@ export interface AssetEntity {
   type: AssetTypeEnum
   size: number
   sort: number
+  poster: string
   albumId: number
   plodId: number
   userOpenid: string
@@ -22,10 +23,11 @@ export interface AssetEntity {
 export interface CreateAssetDto {
   url: string
   type: AssetTypeEnum
-  size: number
-  sort: number
   albumId: number
-  plodId: number
+  sort?: number
+  size?: number
+  poster?: string
+  plodId?: number
 }
 
 const create = (data: CreateAssetDto) => {

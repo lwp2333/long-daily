@@ -54,10 +54,14 @@ import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { sortMemorialDayList } from '@/utils'
 import { menuItems } from '@nutui/nutui-taro/dist/types/__VUE/actionsheet/index.taro.vue'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { computed, reactive, ref } from 'vue'
 
 const dataStore = useDataStore()
+
+useDidShow(async () => {
+  await dataStore.getMemorialDayData()
+})
 const { showToast } = useToast()
 const list = computed(() => sortMemorialDayList(dataStore.memorialDayList))
 
@@ -68,6 +72,7 @@ const refreshData = async () => {
 
 const show = ref(false)
 const openCreate = () => {
+  editId.value = undefined
   show.value = true
 }
 

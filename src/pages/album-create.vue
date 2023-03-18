@@ -14,7 +14,7 @@
         <div class="label">相册名称</div>
         <div class="control">
           <nut-input
-            v-model="form.name"
+            v-model.trim="form.name"
             type="text"
             :max-length="8"
             show-word-limit

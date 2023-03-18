@@ -14,8 +14,8 @@
       <div class="form-item">
         <div class="control">
           <nut-input
-            v-model="formModel.name"
-            type="text"
+            v-model.trim="formModel.name"
+            type="textarea"
             :max-length="8"
             show-word-limit
             :border="false"
@@ -82,6 +82,7 @@ import memorialDayApi, { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum
 import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
+import { nextTick } from '@tarojs/taro'
 import dayjs from 'dayjs'
 import { computed, reactive, ref, toRefs, watchEffect } from 'vue'
 interface Props {
@@ -128,13 +129,18 @@ const formModel = reactive<CreateMemorialDayDto>({
 })
 
 watchEffect(async () => {
-  if (id?.value) {
-    const res = await memorialDayApi.getDetailById(id.value)
-    formModel.name = res.name
-    formModel.icon = res.icon
-    formModel.date = dayjs(res.date).format('YYYY-MM-DD')
-    formModel.dateType = res.dateType
-    formModel.type = res.type
+  if (show.value) {
+    if (id?.value) {
+      const res = await memorialDayApi.getDetailById(id.value)
+      formModel.icon = res.icon
+      formModel.date = dayjs(res.date).format('YYYY-MM-DD')
+      formModel.dateType = res.dateType
+      formModel.type = res.type
+      nextTick(() => {
+        console.log(res.name)
+        formModel.name = res.name
+      })
+    }
   }
 })
 
@@ -215,8 +221,12 @@ const hanldeClose = () => {
     padding-top: 8px;
     padding-bottom: 8px;
   }
-  .nut-input {
-    padding: 4px;
-  }
+}
+
+.nut-input {
+  padding: 4px;
+}
+.nut-radio-group .nut-radio {
+  margin-bottom: 0px;
 }
 </style>

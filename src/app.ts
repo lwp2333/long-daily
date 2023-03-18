@@ -1,8 +1,14 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import './app.scss'
+import Taro from '@tarojs/taro'
 const store = createPinia()
 
+Taro.loadFontFace({
+  global: true,
+  family: 'si-yuan',
+  source: 'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/font/font.woff'
+})
 const App = createApp({
   onShow(options: any) {
     console.log('app:onShow', options)

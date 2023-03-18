@@ -1,23 +1,20 @@
 <template>
   <div class="time-machine-page">
-    <BannerCard v-bind="swiperState" />
+    <BannerCard :initPge="initPage" :list="userInfo.bannerList || []" />
     <div class="content">
-      <div class="plog-card" v-for="item in [1, 2, 3, 4]" :key="item">
+      <div class="plog-card" v-for="item in plogList" :key="item.id">
         <div class="top">
-          <nut-avatar size="32">
-            <img src="https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/chun.png" />
-          </nut-avatar>
+          <image :src="userInfo.avatar" mode="aspectFill" class="avatar" />
           <div class="infoBox">
-            <div class="name">五边形的男人</div>
-            <div class="time">2022-12-06 17:32</div>
+            <div class="name">{{ userInfo.nickName }}</div>
+            <div class="time">{{ item.lastUpdateTime }}</div>
           </div>
-          <IconFont name="more-s" :size="18" @click="openAction" />
+          <IconFont name="more-s" :size="18" @click="openAction(item)" />
         </div>
         <div class="middle">
-          该生学习态度端正,学习认真,已经过国家英语四级,有较强的思维本事和动手本事。吃苦耐劳朴实大方,
-          思想上要求提高,进取向党组织靠拢,学习勤奋努力喜欢体育运...
+          {{ item.content }}
         </div>
-        <AssetCard :assets="[]" />
+        <AssetCard :assets="item.assets" />
       </div>
     </div>
   </div>
@@ -34,31 +31,59 @@
     cancel-txt="取消"
     @choose="selected"
   />
+  <!-- 确定删除 -->
+  <nut-dialog
+    title="确定删除嘛？"
+    v-model:visible="confirmShow"
+    footer-direction="vertical"
+    @cancel="confirmShow = false"
+    @ok="delConfirm"
+  />
 </template>
 
 <script lang="ts" setup>
+import plogApi, { PlogEntity } from '@/api/plogApi'
 import AssetCard from '@/components/assetCard.vue'
 import BannerCard from '@/components/bannerCard.vue'
+import useToast from '@/hooks/useToast'
+import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
-import Taro from '@tarojs/taro'
-import { reactive } from 'vue'
+import Taro, { usePullDownRefresh, useReachBottom } from '@tarojs/taro'
+import { computed, reactive, ref, watchEffect } from 'vue'
 
-const swiperState = reactive({
-  initPage: 1,
-  list: [
-    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner1.jpg',
-    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner2.jpg',
-    'https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/banner3.jpg'
-  ]
+const { showToast, showLoading, hideLoading } = useToast()
+const dataStore = useDataStore()
+const userInfo = computed(() => dataStore.userInfo || [])
+const plogList = computed(() => dataStore.plogList)
+
+const loading = ref(false)
+
+usePullDownRefresh(async () => {
+  await dataStore.refreshPlogList()
+  Taro.stopPullDownRefresh()
+  showToast('刷新成功')
 })
+
+useReachBottom(async () => {
+  loading.value = true
+  await dataStore.loadMorePlogList()
+  loading.value = false
+})
+
+watchEffect(() => {
+  dataStore.getUserInfo()
+})
+
+const initPage = ref(0)
 
 const actionState = reactive({
   show: false,
   menuItems: [
-    {
-      id: 'Edit',
-      name: '编辑'
-    },
+    // {
+    //   id: 'Edit',
+    //   name: '编辑',
+    //   disable: true
+    // },
     {
       id: 'Del',
       name: '删除',
@@ -67,13 +92,24 @@ const actionState = reactive({
   ]
 })
 
-const openAction = () => {
+const curId = ref(0)
+const confirmShow = ref(false)
+const openAction = (item: PlogEntity) => {
+  curId.value = item.id
   actionState.show = true
 }
 
-const selected = (item: unknown) => {
-  console.log(item)
-  Taro.vibrateLong()
+const selected = (item: any) => {
+  if (item.id === 'Del') {
+    confirmShow.value = true
+  }
+}
+
+const delConfirm = async () => {
+  await plogApi.delectById(curId.value)
+  // 通过store来删除本地数据
+  await dataStore.delPlogById(curId.value)
+  curId.value = 0
 }
 
 const navCreate = () => {
@@ -97,7 +133,6 @@ const navCreate = () => {
 
 .plog-card {
   width: 100%;
-  // min-height: 220px;
   padding: 12px;
   border-radius: 12px;
   background-color: #fff;
@@ -108,6 +143,11 @@ const navCreate = () => {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
     .infoBox {
       flex: 1;
       margin-left: 8px;

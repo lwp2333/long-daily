@@ -5,7 +5,7 @@ export default defineAppConfig({
     'pages/index',
     'pages/memorial-day',
     'pages/life-inventory',
-    'pages/preview',
+    // 'pages/preview',
     'pages/album',
     'pages/album-create',
     'pages/album-detail',
@@ -13,7 +13,8 @@ export default defineAppConfig({
     'pages/time-machine-create',
     'pages/my',
     'pages/edit-userInfo',
-    'pages/banner-setting'
+    'pages/banner-setting',
+    'pages/about'
   ],
   tabBar: {
     color: '#000',

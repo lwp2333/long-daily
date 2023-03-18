@@ -11,14 +11,18 @@
     position="bottom"
     @clickOverlay="hanldeClose"
   >
-    <div class="recordCard">
-      <svgIcon name="record" :size="64" />
+    <nut-noticebar background="#E6F0FF" color="#0066FF">
+      <template #left-icon>
+        <IconFont name="clock" color="#0066ff" />
+      </template>
       <nut-countdown :time="maxTime" ref="CountDown" :autoStart="false" format="mm:ss:SS" />
-      <div class="control">
-        <nut-button v-if="!hasStart" size="mini" type="info" @click="start"> 开始 </nut-button>
-        <nut-button v-else size="mini" type="info" @click="resume"> 继续 </nut-button>
-        <nut-button size="mini" type="info" @click="pause">暂停</nut-button>
-        <nut-button size="mini" type="info" @click="stop">结束</nut-button>
+    </nut-noticebar>
+    <div class="recordCard">
+      <svgIcon v-if="status === 'pending'" name="record" :size="64" @click="start" />
+      <div v-else class="control">
+        <svgIcon v-if="status === 'pause'" name="play" :size="64" @click="resume" />
+        <svgIcon v-else name="record-pause" :size="64" @click="pause" />
+        <svgIcon name="recording" :size="64" @longpress="stop" />
       </div>
     </div>
   </nut-popup>
@@ -29,23 +33,24 @@ import { ref, toRefs } from 'vue'
 import svgIcon from './svgIcon.vue'
 import Taro from '@tarojs/taro'
 import { computed } from 'vue'
+import { IconFont } from '@nutui/icons-vue-taro'
+
+export interface RecorderItem {
+  /** 录音总时长，单位：ms */
+  duration: number
+  /** 录音文件大小，单位：Byte */
+  fileSize: number
+  /** 录音文件的临时路径 */
+  tempFilePath: string
+}
+type Status = 'pending' | 'recording' | 'pause'
 
 interface Props {
   visible?: boolean
 }
 
 interface Event {
-  (
-    event: 'change',
-    data: {
-      /** 录音总时长，单位：ms */
-      duration: number
-      /** 录音文件大小，单位：Byte */
-      fileSize: number
-      /** 录音文件的临时路径 */
-      tempFilePath: string
-    }
-  ): void
+  (event: 'change', data: RecorderItem): void
   (event: 'update:visible', visible: boolean): void
 }
 
@@ -60,73 +65,80 @@ const show = computed({
     emit('update:visible', val)
   }
 })
+const hanldeClose = () => {
+  show.value = false
+}
+
+const status = ref<Status>('pending')
+
 const CountDown = ref()
 const maxTime = ref(1000 * 60 * 5)
-
-const hasStart = ref(false)
 
 const RecordManager = Taro.getRecorderManager()
 
 RecordManager.onStart(() => {
   CountDown.value.start() // 开始计时
-  hasStart.value = true
+  status.value = 'recording'
 })
 
 RecordManager.onPause(() => {
-  CountDown.value.pause() // 开始计时
+  CountDown.value.pause() // 暂停计时
+  status.value = 'pause'
 })
 
 RecordManager.onResume(() => {
   CountDown.value.start() //继续计时
+  status.value = 'recording'
 })
 RecordManager.onStop(res => {
   CountDown.value.pause() // 暂停计时
+  status.value = 'pending'
   emit('change', res)
   hanldeClose()
 })
 
 // 开始录音
 const start = () => {
+  Taro.vibrateShort()
   RecordManager.start({ format: 'mp3' })
 }
 // 暂停录音
 const pause = () => {
+  Taro.vibrateShort()
   RecordManager.pause()
 }
 // 继续录音
 const resume = () => {
+  Taro.vibrateShort()
   RecordManager.resume()
 }
 // 停止录音
 const stop = () => {
+  Taro.vibrateLong()
   RecordManager.stop()
-}
-
-const hanldeClose = () => {
-  show.value = false
 }
 </script>
 
 <style lang="scss">
 .recordCard {
-  width: calc(100vw - 32px);
-  margin: 0 auto;
-  min-height: 160px;
+  width: 100%;
+  height: calc(32vh - 72px);
   background-color: #fff;
   border-radius: 12px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
-  .nut-countdown {
-    font-size: 12px;
-    color: #000;
-  }
+
   .control {
-    width: 100%;
+    width: 160px;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
+  }
+  .nut-countdown {
+    margin-top: 24px;
+    font-size: 14px;
+    color: #000;
   }
 }
 </style>

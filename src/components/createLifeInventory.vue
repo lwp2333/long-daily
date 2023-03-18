@@ -14,7 +14,7 @@
       <div class="form-item">
         <div class="control">
           <nut-input
-            v-model="formModel.name"
+            v-model.trim="formModel.name"
             type="text"
             :max-length="12"
             show-word-limit

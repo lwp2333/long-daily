@@ -16,6 +16,8 @@ export interface UserEntity {
   birthday: string
   signature: string
   bannerList?: string[]
+  registerTime: string
+  lastUpdateTime: string
 }
 export interface UpdateUserDto {
   nickName?: string

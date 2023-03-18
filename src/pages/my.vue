@@ -25,7 +25,7 @@
       <nut-cell title="个人信息" is-link @click="handleNav('/pages/edit-userInfo')" />
       <nut-cell title="设置轮播图" is-link @click="handleNav('/pages/banner-setting')" />
       <nut-cell title="回收站" is-link @click="waiting" />
-      <nut-cell title="关于小程序" is-link />
+      <nut-cell title="关于小程序" is-link @click="handleNav('/pages/about')" />
     </nut-cell-group>
     <nut-cell title="空间切换" is-link @click="waiting" />
   </div>

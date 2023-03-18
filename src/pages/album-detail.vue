@@ -15,7 +15,7 @@
     <div class="content">
       <div class="date-item" v-for="item in detail.groupList">
         <div class="date">{{ item.date }}</div>
-        <AssetCard :assets="item.list" />
+        <GridAssetCard :assets="item.list" />
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import albumApi, { AlbumDetailEntity } from '@/api/albumApi'
-import AssetCard from '@/components/assetCard.vue'
+import GridAssetCard from '@/components/gridAssetCard.vue'
 import Taro, { useRouter } from '@tarojs/taro'
 import { ref, watchEffect } from 'vue'
 
@@ -44,6 +44,7 @@ watchEffect(async () => {
 .albumDetailPage {
   width: 100%;
   min-height: 100vh;
+  background-color: #fff;
 }
 
 .header {
@@ -68,30 +69,15 @@ watchEffect(async () => {
     }
   }
 }
-
 .content {
   margin-top: 32px;
   padding: 8px;
-}
-
-.date-item {
-  .date {
-    margin-left: 8px;
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.64);
+  .date-item {
+    .date {
+      margin-left: 8px;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.64);
+    }
   }
-}
-
-.mini_pic {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-}
-.nut-grid-item__content {
-  padding: 1px;
-}
-
-.nut-grid-item__text {
-  display: none;
 }
 </style>

@@ -116,3 +116,12 @@ export const sortMemorialDayList = (list: MemorialDayEntity[]) => {
     })
     .sort((a, b) => a.days - b.days)
 }
+
+export const second2m_s = (num: number) => {
+  //计算分
+  const m = Math.floor(num / 60).toFixed(0)
+  //计算秒
+  const s = (num % 60).toFixed(0)
+  //如果只有一位数，前面增加一个0
+  return `${m.length == 1 ? '0' + m : m}:${s.length == 1 ? '0' + s : s}`
+}
