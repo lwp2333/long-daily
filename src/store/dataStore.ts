@@ -3,6 +3,7 @@ import lifeInventoryApi, { LifeInventoryEntity } from '@/api/lifeInventoryApi'
 import memorialDayApi, { MemorialDayEntity } from '@/api/memorialDayApi'
 import plogApi, { PlogEntity } from '@/api/plogApi'
 import userApi, { GenderEnum, UserEntity } from '@/api/userApi'
+import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 
@@ -29,12 +30,13 @@ export const useDataStore = defineStore('dataStore', {
       allInit: false,
       token: '',
       userInfo: {
-        openid: 'oqy5602kT2ptTR4NmbbbM-xkP3ZA',
+        openid: '',
         nickName: '',
         avatar: '',
         gender: GenderEnum.unknown,
         birthday: '',
-        signature: ''
+        signature: '',
+        bannerList: []
       },
       plogList: [],
       plogTotal: 0,
@@ -46,14 +48,14 @@ export const useDataStore = defineStore('dataStore', {
   actions: {
     async login(code: string) {
       const res = await userApi.loginByCode(code)
-      const { token, ...userInfo } = res
       this.token = res.token
-      this.userInfo = userInfo
+      // 存入token
+      Taro.setStorageSync('token', res.token)
     },
     async initData() {
       if (this.allInit) return
       await Promise.all([
-        // this.getUserInfo(),
+        this.getUserInfo(),
         this.getPlogList(),
         this.getAlbumList(),
         this.getMemorialDayData(),

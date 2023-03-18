@@ -15,6 +15,7 @@ export interface UserEntity {
   gender: GenderEnum
   birthday: string
   signature: string
+  bannerList?: string[]
 }
 export interface UpdateUserDto {
   nickName?: string
@@ -22,6 +23,7 @@ export interface UpdateUserDto {
   gender?: GenderEnum
   birthday?: string
   signature?: string
+  bannerList?: string[]
 }
 
 const loginByCode = (code: string) => {

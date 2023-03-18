@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import lifeInventoryApi, { LifeInventoryStatusEnum, LifeInventoryEntity } from '@/api/lifeInventoryApi'
+import lifeInventoryApi, { LifeInventoryEntity, LifeInventoryStatusEnum } from '@/api/lifeInventoryApi'
 import CreateLifeInventory from '@/components/createLifeInventory.vue'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'

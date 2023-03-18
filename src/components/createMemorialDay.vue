@@ -79,9 +79,9 @@
 
 <script lang="ts" setup>
 import memorialDayApi, { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
+import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
-import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
 import { computed, reactive, ref, toRefs, watchEffect } from 'vue'
 interface Props {
@@ -99,6 +99,12 @@ const show = computed({
     emit('update:visible', val)
   }
 })
+
+const { showToast } = useToast()
+// 刷新数据
+const refreshData = () => {
+  dataStore.getMemorialDayData()
+}
 
 const iconOptions = ref([
   'dangao',
@@ -156,15 +162,11 @@ const saveConfirm = async () => {
     } else {
       await memorialDayApi.create(formModel)
     }
+    showToast('保存成功')
+    refreshData()
     show.value = false
-    Taro.showToast({
-      title: '操作成功'
-    })
-    dataStore.getMemorialDayData()
   } catch (error) {
-    Taro.showToast({
-      title: '操作失败'
-    })
+    showToast('操作失败')
   }
 }
 const hanldeClose = () => {

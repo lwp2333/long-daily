@@ -60,8 +60,7 @@
 import useAsset from '@/hooks/useAsset'
 import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
-import { onUnmounted } from 'vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 
 const navTo = (url: string) => {
   Taro.navigateTo({

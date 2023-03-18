@@ -48,6 +48,7 @@
 
 <script lang="ts" setup>
 import albumApi, { CreateAlbumDto } from '@/api/albumApi'
+import useToast from '@/hooks/useToast'
 import useUpload from '@/hooks/useUpload'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
@@ -60,6 +61,7 @@ const form = reactive<CreateAlbumDto>({
   coverUrl: ''
 })
 const dataStore = useDataStore()
+const { showToast, showLoading, hideLoading } = useToast()
 const { startUpload } = useUpload()
 
 const handleChangeCover = () => {
@@ -80,19 +82,15 @@ const handleChangeCover = () => {
 
 const handleConfirmSave = async () => {
   try {
-    Taro.showLoading()
+    showLoading()
     albumApi.create(form)
-    Taro.showToast({
-      title: '保存成功！'
-    })
+    showToast('保存成功！')
     await dataStore.getAlbumList()
     handleBack()
   } catch (error) {
-    Taro.showToast({
-      title: '保存失败！'
-    })
+    showToast('保存失败！')
   } finally {
-    Taro.hideLoading()
+    hideLoading()
   }
 }
 

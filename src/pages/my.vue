@@ -32,12 +32,14 @@
 </template>
 
 <script lang="ts" setup>
+import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
 import { computed } from 'vue'
 // import { IconFont } from '@nutui/icons-vue-taro'
 
 const dataStore = useDataStore()
+const { showToast } = useToast()
 
 const userInfo = computed(() => dataStore.userInfo)
 
@@ -48,11 +50,7 @@ const handleNav = (url: string) => {
 }
 
 const waiting = () => {
-  Taro.showToast({
-    title: '敬请期待！',
-    icon: 'none',
-    image: '../static/icon/icon2.png'
-  })
+  showToast('next version')
 }
 </script>
 <style lang="scss">

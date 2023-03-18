@@ -72,52 +72,37 @@
 </template>
 
 <script lang="ts" setup>
-import userApi, { GenderEnum } from '@/api/userApi'
+import userApi, { GenderEnum, UpdateUserDto } from '@/api/userApi'
+import useToast from '@/hooks/useToast'
 import useUpload from '@/hooks/useUpload'
 import { mapGender, useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
-import Taro from '@tarojs/taro'
 import dayjs from 'dayjs'
-import { computed, nextTick, ref, watchEffect } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 
 const dataStore = useDataStore()
-watchEffect(() => {
-  dataStore.getUserInfo()
-})
-
 const userInfo = computed(() => dataStore.userInfo)
 
 const { startUpload } = useUpload()
-
-const onChooseAvatar = async (e: any) => {
-  const avatar = await startUpload(e.detail.avatarUrl)
-  userApi.updateUserInfo({ avatar }).then(() => {
-    refresh()
-  })
-}
-// const { multiProgress, startUploadMutile } = useUpload()
-// const onChooseMutileFile = async () => {
-//   const fileList = await Taro.chooseMedia({
-//     sourceType: ['album'],
-//     mediaType: ['image', 'video'],
-//     count: 9,
-//     maxDuration: 30
-//   })
-
-//   const tmp = fileList.tempFiles.map(it => it.tempFilePath)
-//   const res = await startUploadMutile(tmp)
-// }
-
-// watch(multiProgress, val => {
-//   console.log('val:', val)
-// })
+const { showToast } = useToast()
 
 // 刷新数据
 const refresh = () => {
   dataStore.getUserInfo()
 }
 
-// 更改姓名
+const saveUserInfo = (data: UpdateUserDto) => {
+  userApi.updateUserInfo(data).then(() => {
+    showToast('修改成功')
+    refresh()
+  })
+}
+// 更新头像
+const onChooseAvatar = async (e: any) => {
+  const avatar = await startUpload(e.detail.avatarUrl)
+  saveUserInfo({ avatar })
+}
+// 更新姓名
 const nickName = ref('')
 const nickNameEditShow = ref(false)
 const openEidtNickName = () => {
@@ -130,14 +115,22 @@ const cancelEditNickName = () => {
   nickNameEditShow.value = false
 }
 const confirmEditNickName = () => {
-  userApi.updateUserInfo({ nickName: nickName.value }).then(() => {
-    Taro.showToast({
-      title: '操作成功'
-    })
-    dataStore.getUserInfo()
-  })
+  saveUserInfo({ nickName: nickName.value })
 }
-// 更改生日
+// 更新性别
+const gender = ref(GenderEnum.unknown)
+const genderEditShow = ref(false)
+const openEditGender = () => {
+  gender.value = userInfo.value.gender
+  genderEditShow.value = true
+}
+const cancelEditGender = () => {
+  genderEditShow.value = false
+}
+const confirmEditGender = () => {
+  saveUserInfo({ gender: gender.value })
+}
+// 更新生日
 const showDatePopup = ref(false)
 const minDate = new Date(1900, 1, 1)
 const maxDate = new Date(2100, 12, 30)
@@ -150,18 +143,10 @@ const openSelectDate = () => {
 }
 const popupConfirm = ({ selectedOptions }) => {
   const birthday = selectedOptions.map((val: any) => val.text).join('-')
-  userApi
-    .updateUserInfo({
-      birthday
-    })
-    .then(() => {
-      Taro.showToast({
-        title: '操作成功'
-      })
-      dataStore.getUserInfo()
-    })
+  saveUserInfo({ birthday })
   showDatePopup.value = false
 }
+// 更新签名
 const signature = ref()
 const signatureEditShow = ref(false)
 const openEditSignature = () => {
@@ -172,31 +157,7 @@ const cancelEditSignature = () => {
   signatureEditShow.value = false
 }
 const confirmEditSignature = () => {
-  userApi.updateUserInfo({ signature: signature.value }).then(() => {
-    Taro.showToast({
-      title: '操作成功'
-    })
-    dataStore.getUserInfo()
-  })
-}
-
-const gender = ref(GenderEnum.unknown)
-const genderEditShow = ref(false)
-
-const openEditGender = () => {
-  gender.value = userInfo.value.gender
-  genderEditShow.value = true
-}
-const cancelEditGender = () => {
-  genderEditShow.value = false
-}
-const confirmEditGender = () => {
-  userApi.updateUserInfo({ gender: gender.value }).then(() => {
-    Taro.showToast({
-      title: '操作成功'
-    })
-    dataStore.getUserInfo()
-  })
+  saveUserInfo({ signature: signature.value })
 }
 </script>
 
@@ -205,9 +166,6 @@ const confirmEditGender = () => {
   width: 100%;
   min-height: 100vh;
   background-color: #f6f7f8;
-  // background-image: url('https://cdn200.oss-cn-hangzhou.aliyuncs.com/long-daily/user_bg.png');
-  // background-size: contain;
-  // background-repeat: no-repeat;
   padding-top: 4px;
   padding-left: 8px;
   padding-right: 8px;

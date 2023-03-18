@@ -37,11 +37,11 @@
 </template>
 
 <script lang="ts" setup>
+import AssetCard from '@/components/assetCard.vue'
+import BannerCard from '@/components/bannerCard.vue'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
 import { reactive } from 'vue'
-import BannerCard from '@/components/bannerCard.vue'
-import AssetCard from '@/components/assetCard.vue'
 
 const swiperState = reactive({
   initPage: 1,

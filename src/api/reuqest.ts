@@ -1,4 +1,3 @@
-import { useDataStore } from '@/store/dataStore'
 import Taro from '@tarojs/taro'
 
 // const baseUrl = 'http://wx.ikun.js.cn'
@@ -13,7 +12,7 @@ interface ResType<T> {
 }
 
 const Get = async <T>(url: string, data?: unknown) => {
-  const { token } = useDataStore()
+  const token = Taro.getStorageSync('token')
   const res = await Taro.request<ResType<T>>({
     url: baseUrl + url,
     method: 'GET',
@@ -27,7 +26,7 @@ const Get = async <T>(url: string, data?: unknown) => {
 }
 
 const Post = async <T>(url: string, data?: unknown) => {
-  const { token } = useDataStore()
+  const token = Taro.getStorageSync('token')
   const res = await Taro.request<ResType<T>>({
     url: baseUrl + url,
     method: 'POST',
@@ -42,7 +41,7 @@ const Post = async <T>(url: string, data?: unknown) => {
 }
 
 const Delect = async <T>(url: string, data?: unknown) => {
-  const { token } = useDataStore()
+  const token = Taro.getStorageSync('token')
   const res = await Taro.request<ResType<T>>({
     url: baseUrl + url,
     method: 'DELETE',

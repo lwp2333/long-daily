@@ -77,12 +77,12 @@ import RecordPlay from '@/components/recordPlay.vue'
 import Recorder from '@/components/recorder.vue'
 import selectAlbum from '@/components/selectAlbum.vue'
 import SvgIcon from '@/components/svgIcon.vue'
+import useToast from '@/hooks/useToast'
 import useUpload from '@/hooks/useUpload'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro from '@tarojs/taro'
-import { watchEffect } from 'vue'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watchEffect } from 'vue'
 
 interface RecorderItem {
   duration: number
@@ -93,7 +93,10 @@ interface RecorderItem {
 const dataStore = useDataStore()
 const albumList = computed(() => dataStore.albumList)
 
-const albumId = ref<number>(0)
+const { startUpload, startUploadMutile } = useUpload()
+const { showToast, showLoading, hideLoading } = useToast()
+
+const albumId = ref<number>(-1)
 const formModel = reactive<CreatePlogDto>({
   content: '',
   address: '',
@@ -105,8 +108,6 @@ const videoCacheList = ref<Taro.chooseMedia.ChooseMedia[]>([])
 const audioCache = ref<RecorderItem>()
 
 const showType = computed(() => !imgCacheList.value.length && !videoCacheList.value.length && !audioCache.value)
-
-const { startUpload, startUploadMutile } = useUpload()
 
 // 照片
 const choosePhotos = async () => {
@@ -175,13 +176,11 @@ const openRecoder = () => {
   recorderShow.value = true
 }
 const handleRecorderChange = async (record: RecorderItem) => {
-  Taro.showLoading({
-    title: '上传中...'
-  })
+  showLoading('上传中...')
   const url = await startUpload(record.tempFilePath)
   record.tempFilePath = url
   audioCache.value = record
-  Taro.hideLoading()
+  hideLoading()
 }
 
 // 选择相册组
@@ -227,7 +226,7 @@ watchEffect(() => {
       type: AssetTypeEnum.video,
       size: audioCache.value.fileSize,
       sort: 1,
-      albumId: 1008611
+      albumId: -2 // 默认录音组id为-2
     })
   }
   formModel.assets = allList
@@ -236,19 +235,22 @@ watchEffect(() => {
 const confirmShow = ref(false)
 const openConfirmShow = () => {
   if (!formModel.content && !formModel.assets.length) {
-    Taro.showToast({
-      title: '请输内容或上传照片/视频/语音'
-    })
+    showToast('请输内容或上传照片/视频/语音')
     return
   }
-
-  if (imgCacheList.value.length || videoCacheList.value) confirmShow.value = true
+  confirmShow.value = true
 }
+
+// 刷新数据 可能影响到的()
+const refreshData = () => {
+  dataStore.getAlbumList()
+  dataStore.getPlogList()
+}
+
 const saveConfirm = async () => {
-  Taro.showLoading({
-    title: '正在保存...'
-  })
+  showLoading('正在保存...')
   await plogApi.create(formModel)
+  refreshData()
   Taro.hideLoading()
 }
 </script>

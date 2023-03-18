@@ -8,16 +8,22 @@
 
 <script lang="ts" setup>
 import { useDataStore } from '@/store/dataStore'
-import Taro from '@tarojs/taro'
+import Taro, { nextTick } from '@tarojs/taro'
 import { onBeforeMount } from 'vue'
 
 const dataStore = useDataStore()
 
+const navHome = () => {
+  dataStore.initData()
+  Taro.switchTab({
+    url: '/pages/index'
+  })
+}
+
 onBeforeMount(() => {
-  if (dataStore.token) {
-    Taro.switchTab({
-      url: '/pages/index'
-    })
+  const token = Taro.getStorageSync('token')
+  if (token) {
+    navHome()
   }
 })
 
@@ -25,9 +31,8 @@ const handleAuth = async () => {
   try {
     const res = await Taro.login()
     await dataStore.login(res.code)
-    dataStore.initData()
-    Taro.switchTab({
-      url: '/pages/index'
+    nextTick(() => {
+      navHome()
     })
   } catch (error) {
     console.log(error)

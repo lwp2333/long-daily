@@ -34,7 +34,7 @@
     <svgIcon name="add" :size="48" />
   </div>
 
-  <createMemorialDay v-model:visible="show" :id="curId" />
+  <createMemorialDay v-model:visible="show" :id="editId" />
 
   <nut-action-sheet
     v-model:visible="actionState.show"
@@ -50,29 +50,33 @@
 import memorialDayApi, { DateTypeEnum, MemorialDayTypeEnum } from '@/api/memorialDayApi'
 import createMemorialDay from '@/components/createMemorialDay.vue'
 import svgIcon from '@/components/svgIcon.vue'
+import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { sortMemorialDayList } from '@/utils'
 import { menuItems } from '@nutui/nutui-taro/dist/types/__VUE/actionsheet/index.taro.vue'
 import Taro from '@tarojs/taro'
-import { computed, reactive, ref, watchEffect } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 const dataStore = useDataStore()
-
+const { showToast } = useToast()
 const list = computed(() => sortMemorialDayList(dataStore.memorialDayList))
 
-watchEffect(() => {
-  dataStore.getMemorialDayData()
-})
+// 刷新数据
+const refreshData = async () => {
+  await dataStore.getMemorialDayData()
+}
 
 const show = ref(false)
 const openCreate = () => {
   show.value = true
 }
 
-const curId = ref<number>()
+let cacheId: number = 0
+const delId = ref<number>()
+const editId = ref<number>()
 const handleAction = (id: number) => {
   Taro.vibrateShort()
-  curId.value = id
+  cacheId = id
   actionState.show = true
 }
 
@@ -91,23 +95,23 @@ const actionState = reactive({
 
 const selected = ({ name }: menuItems) => {
   if (name === '编辑') {
+    editId.value = cacheId
     show.value = true
   } else {
+    delId.value = cacheId
     delShow.value = true
   }
 }
-const delShow = ref(false)
 
+const delShow = ref(false)
 const hanldeDelCancel = () => {
-  curId.value = undefined
+  delId.value = undefined
   delShow.value = false
 }
 const hanldeDelConfirm = () => {
-  memorialDayApi.deleteById(curId.value!).then(() => {
-    Taro.showToast({
-      title: '删除成功'
-    })
-    dataStore.getMemorialDayData()
+  memorialDayApi.deleteById(delId.value!).then(() => {
+    showToast('删除成功')
+    refreshData()
   })
 }
 </script>

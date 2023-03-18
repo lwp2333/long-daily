@@ -35,8 +35,7 @@
 import BannerCard from '@/components/bannerCard.vue'
 import useUpload from '@/hooks/useUpload'
 import { IconFont } from '@nutui/icons-vue-taro'
-import Taro from '@tarojs/taro'
-import { nextTick } from '@tarojs/taro'
+import Taro, { nextTick } from '@tarojs/taro'
 import { reactive, ref } from 'vue'
 
 const state = reactive({
