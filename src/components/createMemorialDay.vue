@@ -10,7 +10,7 @@
     position="bottom"
     @clickOverlay="hanldeClose"
   >
-    <div class="content">
+    <div class="create-memorial-day">
       <div class="form-item">
         <div class="control">
           <nut-input
@@ -176,46 +176,45 @@ const hanldeClose = () => {
 </script>
 
 <style lang="less">
-.content {
+.create-memorial-day {
   padding-top: 32px;
   padding-left: 4px;
   padding-right: 4px;
-}
-.form-item {
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-
-  .label {
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.64);
-  }
-  .control {
-    flex: 1;
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.42);
-    text-align: right;
+  .form-item {
+    padding: 8px 12px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: flex-end;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.64);
+    }
+    .control {
+      flex: 1;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.42);
+      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
   }
-}
+  .action {
+    margin-top: 32px;
+    padding: 0 28vw;
+  }
 
-.action {
-  margin-top: 32px;
-  padding: 0 28vw;
-}
-.nut-input {
-  padding: 4px;
-}
-
-.icon-list {
-  display: inline-flex;
-  width: 72vw;
-  overflow: auto;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  .icon-list {
+    display: inline-flex;
+    width: 72vw;
+    overflow: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .nut-input {
+    padding: 4px;
+  }
 }
 </style>

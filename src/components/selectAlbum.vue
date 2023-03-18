@@ -75,7 +75,7 @@ const handleChange = () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .album-list {
   width: 100%;
   overflow: auto;

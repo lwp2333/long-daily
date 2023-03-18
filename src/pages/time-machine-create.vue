@@ -1,6 +1,6 @@
 <template>
   <div class="time-machine-create">
-    <div class="banner">
+    <div class="top-tips">
       <span>时光机，祝你天天开心！</span>
       <SvgIcon name="earth" :size="88" />
     </div>
@@ -261,28 +261,59 @@ const saveConfirm = async () => {
   padding-left: 4px;
   padding-right: 4px;
   padding-bottom: calc(32px + env(safe-area-inset-bottom));
+  .top-tips {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .type-box {
+    padding: 12px;
+    background-color: #fff;
+    border-top: 1px solid #f6f7f8;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .type-item {
+      padding: 4px 8px;
+      width: 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      border-radius: 8px;
+      background-color: #f6f7f8;
+      color: rgba(0, 0, 0, 0.72);
+      &:not(:last-child) {
+        margin-right: 12px;
+      }
+    }
+  }
 }
 
-.gray-text {
-  font-size: 12px;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.4);
-}
-
-.nut-cell__title {
-  justify-content: center;
-}
 .cell-right {
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.mini-cover {
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  margin-right: 4px;
+  .mini-cover {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+
+  .gray-text {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.4);
+  }
 }
 
 .upload-box {
@@ -336,6 +367,11 @@ const saveConfirm = async () => {
   }
 }
 
+.audio-box {
+  padding: 12px;
+  background-color: #fff;
+}
+
 .action {
   position: fixed;
   width: 100vw;
@@ -343,41 +379,6 @@ const saveConfirm = async () => {
   bottom: 0;
   background-color: #fff;
   padding: 16px 12vw;
-}
-
-.type-box {
-  padding: 12px;
-  background-color: #fff;
-  border-top: 1px solid #f6f7f8;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-.type-item {
-  padding: 4px 8px;
-  width: 52px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 10px;
-  border-radius: 8px;
-  background-color: #f6f7f8;
-  color: rgba(0, 0, 0, 0.72);
-  &:not(:last-child) {
-    margin-right: 12px;
-  }
-}
-.banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #fff;
-  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-  padding: 12px;
-  font-size: 16px;
-  font-weight: 500;
-  border-radius: 8px;
-  margin-bottom: 8px;
 }
 
 .nut-grid-item__content {
@@ -393,8 +394,7 @@ const saveConfirm = async () => {
   font-size: 16px;
 }
 
-.audio-box {
-  padding: 12px;
-  background-color: #fff;
+.nut-cell__title {
+  justify-content: center;
 }
 </style>

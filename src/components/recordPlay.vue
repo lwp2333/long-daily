@@ -76,7 +76,7 @@ const handlePlayOrStop = () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .duration {
   width: 120px;
   text-align: end;

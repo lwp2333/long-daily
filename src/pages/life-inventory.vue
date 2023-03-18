@@ -53,7 +53,7 @@ const handleChangeStatus = (item: LifeInventoryEntity) => {
 }
 </script>
 
-<style lang="less">
+<style lang="scss">
 .life-inventory-page {
   width: 100%;
   min-height: 100vh;

@@ -49,7 +49,9 @@ const handleNav = (url: string) => {
 
 const waiting = () => {
   Taro.showToast({
-    title: '敬请期待！'
+    title: '敬请期待！',
+    icon: 'none',
+    image: '../static/icon/icon2.png'
   })
 }
 </script>

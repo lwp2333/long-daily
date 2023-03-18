@@ -114,21 +114,19 @@ const hanldeClose = () => {
   min-height: 160px;
   background-color: #fff;
   border-radius: 12px;
-
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-}
-
-.nut-countdown {
-  font-size: 12px;
-  color: #000;
-}
-.control {
-  width: 100%;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+  .nut-countdown {
+    font-size: 12px;
+    color: #000;
+  }
+  .control {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+  }
 }
 </style>

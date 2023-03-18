@@ -10,7 +10,7 @@
     position="bottom"
     @clickOverlay="hanldeClose"
   >
-    <div class="content">
+    <div class="create-life-inventory">
       <div class="form-item">
         <div class="control">
           <nut-input
@@ -140,45 +140,40 @@ const hanldeClose = () => {
 }
 </script>
 
-<style lang="less">
-.content {
+<style lang="scss">
+.create-life-inventory {
   padding-top: 32px;
   padding-left: 4px;
   padding-right: 4px;
-}
-.form-item {
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  .label {
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.64);
-  }
-  .control {
-    flex: 1;
-    font-size: 14px;
-    color: rgba(0, 0, 0, 0.42);
-    text-align: right;
+  .form-item {
+    padding: 8px 12px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: flex-end;
-  }
-}
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-.action {
-  margin-top: 32px;
-  padding: 0 32vw;
+    .label {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.64);
+    }
+    .control {
+      flex: 1;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.42);
+      text-align: right;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+  .color-bar {
+    width: 32px;
+    height: 12px;
+    border-radius: 6px;
+  }
 }
 .nut-input {
   padding: 4px;
-}
-
-.color-bar {
-  width: 32px;
-  height: 12px;
-  border-radius: 6px;
 }
 </style>
