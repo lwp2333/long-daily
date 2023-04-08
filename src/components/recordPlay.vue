@@ -5,7 +5,8 @@
       <SvgIcon v-else name="pause" :size="24" />
     </div>
     <nut-progress :percentage="percentage" :show-text="false" size="small" stroke-color="#0064fa" />
-    <div class="duration">{{ second2m_s(duration - curDuration) }}</div>
+    <div v-if="src" class="duration">{{ second2m_s(duration - curDuration) }}</div>
+    <div v-else class="duration">00:00</div>
   </div>
 </template>
 
@@ -76,7 +77,7 @@ const init = (url: string) => {
 }
 
 watchEffect(() => {
-  init(src.value)
+  src.value && init(src.value)
 })
 
 onUnmounted(() => {

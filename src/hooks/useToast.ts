@@ -17,8 +17,9 @@ const useToast = () => {
     })
   }
 
-  const hideLoading = () => {
+  const hideLoading = (text?: string) => {
     Taro.hideLoading()
+    text && showToast(text)
   }
   return {
     showToast,

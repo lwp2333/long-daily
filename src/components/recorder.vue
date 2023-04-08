@@ -1,6 +1,6 @@
 <template>
   <nut-popup
-    v-model:visible="show"
+    :visible="show"
     :style="{
       height: '32vh'
     }"
@@ -9,23 +9,42 @@
     destroyOnClose
     close-on-click-overlay
     position="bottom"
-    @clickOverlay="hanldeClose"
+    @clickOverlay="confirmClose"
   >
     <nut-noticebar background="#E6F0FF" color="#0066FF">
       <template #left-icon>
         <IconFont name="clock" color="#0066ff" />
       </template>
-      <nut-countdown :time="maxTime" ref="CountDown" :autoStart="false" format="mm:ss:SS" />
+      <nut-countdown :time="maxTime" ref="CountDown" :autoStart="false" format="mm:ss:SS" @on-end="stop" />
     </nut-noticebar>
     <div class="recordCard">
-      <svgIcon v-if="status === 'pending'" name="record" :size="64" @click="start" />
+      <div v-if="status === 'pending'" class="control-item">
+        <svgIcon name="record" :size="48" @click="start" />
+        <span class="text">点击开始</span>
+      </div>
       <div v-else class="control">
-        <svgIcon v-if="status === 'pause'" name="play" :size="64" @click="resume" />
-        <svgIcon v-else name="record-pause" :size="64" @click="pause" />
-        <svgIcon name="recording" :size="64" @longpress="stop" />
+        <div v-if="status === 'pause'" class="control-item">
+          <svgIcon name="play" :size="48" @click="resume" />
+          <span class="text">继续</span>
+        </div>
+        <div v-else class="control-item">
+          <svgIcon name="record-pause" :size="48" @click="pause" />
+          <span class="text">暂停</span>
+        </div>
+        <div class="control-item">
+          <svgIcon name="recording" :size="48" @longpress="stop" />
+          <span class="text">结束</span>
+        </div>
       </div>
     </div>
   </nut-popup>
+  <nut-dialog
+    title="提示"
+    content="当前正在录音，是否结束录音？"
+    v-model:visible="dialogShow"
+    @cancel="dialogShow = false"
+    @ok="stop"
+  /> 
 </template>
 
 <script lang="ts" setup>
@@ -100,7 +119,7 @@ RecordManager.onStop(res => {
 // 开始录音
 const start = () => {
   Taro.vibrateShort()
-  RecordManager.start({ format: 'mp3' })
+  RecordManager.start({ format: 'wav' })
 }
 // 暂停录音
 const pause = () => {
@@ -117,6 +136,17 @@ const stop = () => {
   Taro.vibrateLong()
   RecordManager.stop()
 }
+
+// 关闭录音组件tips
+const dialogShow = ref(false)
+
+const confirmClose = () => {
+  if (status.value !== 'pending') {
+    dialogShow.value = true
+  } else {
+    hanldeClose()
+  }
+}
 </script>
 
 <style lang="scss">
@@ -130,15 +160,21 @@ const stop = () => {
   align-items: center;
 
   .control {
-    width: 160px;
+    width: 148px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .nut-countdown {
-    margin-top: 24px;
-    font-size: 14px;
-    color: #000;
+
+  .control-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .text {
+      margin-top: 4px;
+      font-size: 14px;
+      color: #888;
+    }
   }
 }
 </style>

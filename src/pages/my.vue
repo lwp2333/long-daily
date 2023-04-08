@@ -28,6 +28,7 @@
       <nut-cell title="关于小程序" is-link @click="handleNav('/pages/about')" />
     </nut-cell-group>
     <nut-cell title="空间切换" is-link @click="waiting" />
+    <nut-cell title="退出" is-link @longpress="clearToken" />
   </div>
 </template>
 
@@ -50,7 +51,13 @@ const handleNav = (url: string) => {
 }
 
 const waiting = () => {
-  showToast('next version')
+  showToast('wait for the next version')
+}
+const clearToken = () => {
+  Taro.removeStorageSync('token')
+  Taro.reLaunch({
+    url: '/pages/splash'
+  })
 }
 </script>
 <style lang="scss">

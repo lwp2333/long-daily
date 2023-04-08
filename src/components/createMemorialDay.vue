@@ -14,6 +14,7 @@
       <div class="form-item">
         <div class="control">
           <nut-input
+            v-if="flag"
             v-model.trim="formModel.name"
             type="textarea"
             :max-length="8"
@@ -82,8 +83,8 @@ import memorialDayApi, { CreateMemorialDayDto, DateTypeEnum, MemorialDayTypeEnum
 import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
-import { nextTick } from '@tarojs/taro'
 import dayjs from 'dayjs'
+import { nextTick } from '@tarojs/taro'
 import { computed, reactive, ref, toRefs, watchEffect } from 'vue'
 interface Props {
   id?: number
@@ -128,17 +129,20 @@ const formModel = reactive<CreateMemorialDayDto>({
   type: MemorialDayTypeEnum.countdown
 })
 
+const flag = ref(true)
+
 watchEffect(async () => {
   if (show.value) {
     if (id?.value) {
       const res = await memorialDayApi.getDetailById(id.value)
+      flag.value = false
+      formModel.name = res.name
       formModel.icon = res.icon
       formModel.date = dayjs(res.date).format('YYYY-MM-DD')
       formModel.dateType = res.dateType
       formModel.type = res.type
       nextTick(() => {
-        console.log(res.name)
-        formModel.name = res.name
+        flag.value = true
       })
     }
   }

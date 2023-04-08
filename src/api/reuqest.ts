@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 
-// const baseUrl = 'http://wx.ikun.js.cn'
-const baseUrl = 'http://192.168.31.250:3000'
+const baseUrl = 'https://wx.ikun.js.cn'
+// const baseUrl = 'http://192.168.31.250:3000'
 // const baseUrl = 'http://localhost:3000'
 
 interface ResType<T> {

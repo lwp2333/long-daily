@@ -1,7 +1,7 @@
 <template>
   <div class="time-machine-page">
     <BannerCard :initPge="initPage" :list="userInfo.bannerList || []" />
-    <div class="content">
+    <div v-if="plogList.length" class="content">
       <div class="plog-card" v-for="item in plogList" :key="item.id">
         <div class="top">
           <image :src="userInfo.avatar" mode="aspectFill" class="avatar" />
@@ -17,6 +17,7 @@
         <AssetCard :assets="item.assets" />
       </div>
     </div>
+    <nut-empty v-else description="快立即发布新的时刻吧！" />
   </div>
   <div class="fab-btn">
     <nut-button shape="round" type="info" @click="navCreate">
@@ -60,8 +61,11 @@ const loading = ref(false)
 
 usePullDownRefresh(async () => {
   await dataStore.refreshPlogList()
-  Taro.stopPullDownRefresh()
-  showToast('刷新成功')
+  Taro.stopPullDownRefresh({
+    success: () => {
+      showToast('刷新成功')
+    }
+  })
 })
 
 useReachBottom(async () => {
