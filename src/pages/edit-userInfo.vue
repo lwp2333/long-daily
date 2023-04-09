@@ -29,7 +29,15 @@
     @ok="confirmEditNickName"
   >
     <template #default>
-      <nut-input v-model="nickName" :max-length="8" show-word-limit :border="false" placeholder="请输入昵称" />
+      <nut-input
+        v-if="nickNameEditShow"
+        v-model.trim="nickName"
+        type="text"
+        :max-length="8"
+        show-word-limit
+        :border="false"
+        placeholder="请输入昵称"
+      />
     </template>
   </nut-dialog>
   <nut-dialog title="性别修改" v-model:visible="genderEditShow" @cancel="cancelEditGender" @ok="confirmEditGender">

@@ -271,6 +271,7 @@ const openConfirmShow = () => {
 const refreshDataAndBack = () => {
   dataStore.getAlbumList()
   dataStore.refreshPlogList()
+  dataStore.getAssetTypeCount()
   Taro.navigateBack()
 }
 

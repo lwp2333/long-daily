@@ -87,7 +87,7 @@ export const useDataStore = defineStore('dataStore', {
         registerTime: dayjs(dayjs().format('YYYY-MM-DD')).diff(dayjs(res.registerTime).format('YYYY-MM-DD'), 'days') + 1
       }
     },
-    async getPlogList() {
+    async getPlogList(reset = false) {
       const res = await plogApi.getListByPage(this.pageIndex, this.pageSize)
       this.plogTotal = res.total
       const list = res.list.map(it => {
@@ -96,6 +96,9 @@ export const useDataStore = defineStore('dataStore', {
           lastUpdateTime: dayjs(it.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
         }
       })
+      if (reset) {
+        this.plogList = []
+      }
       if (list.length) {
         this.plogList.push(...list)
       } else {
@@ -108,7 +111,7 @@ export const useDataStore = defineStore('dataStore', {
       this.plogTotal = 0
       // this.plogList = []
       this.loadLock = false
-      this.getPlogList()
+      this.getPlogList(true)
     },
 
     async delPlogById(id: number) {
