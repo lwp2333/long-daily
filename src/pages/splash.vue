@@ -12,7 +12,7 @@
 import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import Taro, { nextTick } from '@tarojs/taro'
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
 const dataStore = useDataStore()
 const { showLoading, hideLoading } = useToast()
@@ -24,24 +24,30 @@ const navHome = () => {
   })
 }
 
-onBeforeMount(() => {
-  const token = Taro.getStorageSync('token')
-  if (token) {
-    // navHome()
+const reLogin = ref(false)
+
+onBeforeMount(async () => {
+  try {
+    await Taro.checkSession()
+  } catch (error) {
+    console.log('checkSession error', error)
+    reLogin.value = true
   }
 })
 
 const handleAuth = async () => {
   try {
     showLoading('正在进入...')
-    const res = await Taro.login()
-    await dataStore.login(res.code)
+    if (reLogin.value) {
+      const res = await Taro.login()
+      await dataStore.login(res.code)
+    }
     hideLoading()
     nextTick(() => {
       navHome()
     })
   } catch (error) {
-    console.log(error)
+    console.log('login error', error)
   }
 }
 </script>
