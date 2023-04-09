@@ -50,7 +50,7 @@ import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import { IconFont } from '@nutui/icons-vue-taro'
 import Taro, { usePullDownRefresh, useReachBottom } from '@tarojs/taro'
-import { computed, reactive, ref, watchEffect } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 const { showToast, showLoading, hideLoading } = useToast()
 const dataStore = useDataStore()
@@ -63,7 +63,9 @@ usePullDownRefresh(async () => {
   await dataStore.refreshPlogList()
   Taro.stopPullDownRefresh({
     success: () => {
-      showToast('刷新成功')
+      setTimeout(() => {
+        showToast('刷新成功')
+      }, 320)
     }
   })
 })
@@ -72,10 +74,6 @@ useReachBottom(async () => {
   loading.value = true
   await dataStore.loadMorePlogList()
   loading.value = false
-})
-
-watchEffect(() => {
-  dataStore.getUserInfo()
 })
 
 const initPage = ref(0)
@@ -110,10 +108,12 @@ const selected = (item: any) => {
 }
 
 const delConfirm = async () => {
+  showLoading('删除中...')
   await plogApi.delectById(curId.value)
   // 通过store来删除本地数据
   await dataStore.delPlogById(curId.value)
   curId.value = 0
+  hideLoading()
 }
 
 const navCreate = () => {
@@ -167,7 +167,7 @@ const navCreate = () => {
     }
   }
   .middle {
-    margin-top: 12px;
+    padding: 8px 0;
     font-size: 14px;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.6);

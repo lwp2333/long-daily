@@ -1,5 +1,11 @@
 <template>
   <div class="life-inventory-page">
+    <nut-noticebar background="#E6F0FF" color="#0066FF">
+      <template #left-icon>
+        <IconFont name="tips" color="#0066ff" />
+      </template>
+      长按单个清单切换状态
+    </nut-noticebar>
     <div v-if="lifeInventoryList.length" class="tag-box">
       <div
         v-for="item in lifeInventoryList"
@@ -10,13 +16,12 @@
         {{ item.name }}
       </div>
     </div>
-    <nut-empty v-else description="快开始添加人生清单吧！" />
-    <div class="action">
-      <nut-button size="small" type="info" @click="createShow = true">
+    <nut-empty v-else description="快开始添加有趣的人生清单吧！" />
+    <div class="fab-btn">
+      <nut-button shape="round" type="info" @click="createShow = true">
         <template #icon>
-          <IconFont name="add" />
+          <IconFont name="uploader" />
         </template>
-        新增
       </nut-button>
     </div>
     <CreateLifeInventory v-model:visible="createShow" />
@@ -58,12 +63,12 @@ const handleChangeStatus = (item: LifeInventoryEntity) => {
   width: 100%;
   min-height: 100vh;
   background-color: #fff;
-  padding-top: 12px;
   padding-left: 4px;
   padding-right: 4px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
 
   .tag-box {
+    padding-top: 12px;
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -118,16 +123,9 @@ const handleChangeStatus = (item: LifeInventoryEntity) => {
   }
 }
 
-.action {
+.fab-btn {
   position: fixed;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  width: 100vw;
-  left: 0;
-  bottom: 0;
-  background-color: #fff;
-  padding: 16px 8vw;
-  box-shadow: 0 6px 15px rgb(0 0 0 / 20%);
+  right: 12px;
+  bottom: calc(32px + env(safe-area-inset-bottom));
 }
 </style>

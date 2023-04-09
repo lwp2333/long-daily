@@ -30,6 +30,16 @@ export interface CreateAssetDto {
   plodId?: number
 }
 
+export interface AssetTypeCountEntity {
+  imageCount: number
+  videoCount: number
+  audioCount: number
+}
+
+const getTypeCount = () => {
+  return reuqest.Get<AssetTypeCountEntity>(`/asset/getTypeCount`)
+}
+
 const create = (data: CreateAssetDto) => {
   return reuqest.Post<AssetEntity>('/asset/create', data)
 }
@@ -39,6 +49,7 @@ const deleteById = (id: number) => {
 }
 
 export default {
+  getTypeCount,
   create,
   deleteById
 }

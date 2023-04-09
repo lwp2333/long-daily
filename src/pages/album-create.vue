@@ -42,7 +42,7 @@
     <div class="action">
       <nut-button block type="info" @click="handleConfirmSave">保存</nut-button>
     </div>
-    <div class="back-icon" @click="handleBack"><IconFont name="left" />返回</div>
+    <!-- <div class="back-icon" @click="handleBack"><IconFont name="left" />返回</div> -->
   </div>
 </template>
 

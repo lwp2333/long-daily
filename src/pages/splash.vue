@@ -1,17 +1,21 @@
 <template>
   <div class="splashPage">
     <div class="action">
-      <nut-button open-type="getUserInfo" type="info" @click="handleAuth"> 立即进入 </nut-button>
+      <nut-animate type="ripple" :loop="true">
+        <nut-button open-type="getUserInfo" type="info" @click="handleAuth"> 立即进入 </nut-button>
+      </nut-animate>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
 import Taro, { nextTick } from '@tarojs/taro'
 import { onBeforeMount } from 'vue'
 
 const dataStore = useDataStore()
+const { showLoading, hideLoading } = useToast()
 
 const navHome = () => {
   dataStore.initData()
@@ -23,14 +27,16 @@ const navHome = () => {
 onBeforeMount(() => {
   const token = Taro.getStorageSync('token')
   if (token) {
-    navHome()
+    // navHome()
   }
 })
 
 const handleAuth = async () => {
   try {
+    showLoading('正在进入...')
     const res = await Taro.login()
     await dataStore.login(res.code)
+    hideLoading()
     nextTick(() => {
       navHome()
     })

@@ -9,14 +9,17 @@
         </div>
       </div>
       <div class="bottom">
-        <div class="left">
-          <div class="info"><span class="num">220</span>照片</div>
-          <div class="info"><span class="num">32</span>视频</div>
-          <div class="info"><span class="num">10</span>录音</div>
+        <div class="info">
+          <span class="num"> {{ assetTypeCount.imageCount }}</span>
+          张照片
         </div>
-        <div class="backup">
-          <!-- 回收站
-          <IconFont name="rect-right" size="28rpx" color="#f3812e" /> -->
+        <div class="info">
+          <span class="num"> {{ assetTypeCount.videoCount }}</span>
+          条视频
+        </div>
+        <div class="info">
+          <span class="num"> {{ assetTypeCount.audioCount }} </span>
+          条录音
         </div>
       </div>
     </div>
@@ -43,6 +46,8 @@ const dataStore = useDataStore()
 const { showToast } = useToast()
 
 const userInfo = computed(() => dataStore.userInfo)
+
+const assetTypeCount = computed(() => dataStore.assetTypeCount)
 
 const handleNav = (url: string) => {
   Taro.navigateTo({
@@ -90,36 +95,26 @@ const clearToken = () => {
   .bottom {
     margin-top: 12px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-    .left {
+    .info {
       display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      .info {
-        padding: 0px 12px;
-        font-size: 12px;
-        line-height: 14px;
-        color: rgba(0, 0, 0, 0.6);
-        &:not(:last-child) {
-          border-right: rgba(0, 0, 0, 0.2) 1rpx solid;
-        }
-        .num {
-          color: royalblue;
-          font-size: 16px;
-          font-weight: 400;
-          line-height: 16px;
-          margin-right: 4px;
-        }
-      }
-    }
-    .backup {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 14px;
+      align-items: baseline;
+      padding: 0px 12px;
+      font-size: 12px;
       line-height: 14px;
-      color: #f3812e;
+      color: rgba(0, 0, 0, 0.6);
+      text-align: center;
+      &:not(:last-child) {
+        border-right: rgba(0, 0, 0, 0.2) 1rpx solid;
+      }
+      .num {
+        color: royalblue;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 22px;
+        margin-right: 4px;
+      }
     }
   }
 }

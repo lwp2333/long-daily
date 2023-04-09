@@ -1,12 +1,13 @@
 <template>
   <div class="record-play">
     <div class="control" @click="handlePlayOrStop">
-      <SvgIcon v-if="status === 'stop'" name="play" :size="24" />
-      <SvgIcon v-else name="pause" :size="24" />
+      <SvgIcon v-if="status === 'stop'" name="play" :size="18" />
+      <SvgIcon v-else name="pause" :size="18" />
     </div>
     <nut-progress :percentage="percentage" :show-text="false" size="small" stroke-color="#0064fa" />
     <div v-if="src" class="duration">{{ second2m_s(duration - curDuration) }}</div>
     <div v-else class="duration">00:00</div>
+    <slot></slot>
   </div>
 </template>
 
@@ -95,9 +96,9 @@ const handlePlayOrStop = () => {
 
 <style lang="scss">
 .record-play {
+  position: relative;
   width: 100%;
-  height: 32px;
-  padding: 8px 12px;
+  padding: 6px 8px;
   background: #f6f7f8;
   border-radius: 8px;
   display: flex;
@@ -124,6 +125,6 @@ const handlePlayOrStop = () => {
 
 .nut-progress-outer {
   background-color: #ccc !important;
-  height: 1.6px;
+  height: 2.4px !important;
 }
 </style>

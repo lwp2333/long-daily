@@ -7,13 +7,15 @@ const useToast = () => {
     Taro.showToast({
       title,
       icon,
-      image
+      image,
+      mask: true
     })
   }
 
   const showLoading = (title = '') => {
     Taro.showLoading({
-      title
+      title,
+      mask: true
     })
   }
 

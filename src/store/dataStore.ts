@@ -1,4 +1,5 @@
 import albumApi, { AlbumEntity } from '@/api/albumApi'
+import assetApi, { AssetTypeCountEntity } from '@/api/assetApi'
 import lifeInventoryApi, { LifeInventoryEntity } from '@/api/lifeInventoryApi'
 import memorialDayApi, { MemorialDayEntity } from '@/api/memorialDayApi'
 import plogApi, { PlogEntity } from '@/api/plogApi'
@@ -16,6 +17,7 @@ interface State {
   pageIndex: number
   pageSize: number
   loadLock: boolean
+  assetTypeCount: AssetTypeCountEntity
   albumList: AlbumEntity[]
   memorialDayList: MemorialDayEntity[]
   lifeInventoryList: LifeInventoryEntity[]
@@ -48,6 +50,11 @@ export const useDataStore = defineStore('dataStore', {
       pageIndex: 1,
       pageSize: 20,
       loadLock: false,
+      assetTypeCount: {
+        imageCount: 0,
+        videoCount: 0,
+        audioCount: 0
+      },
       albumList: [],
       memorialDayList: [],
       lifeInventoryList: []
@@ -67,7 +74,8 @@ export const useDataStore = defineStore('dataStore', {
         this.getPlogList(),
         this.getAlbumList(),
         this.getMemorialDayData(),
-        this.getLifeInventory()
+        this.getLifeInventory(),
+        this.getAssetTypeCount()
       ])
       this.allInit = true
     },
@@ -98,7 +106,7 @@ export const useDataStore = defineStore('dataStore', {
       this.pageIndex = 1
       this.pageSize = 20
       this.plogTotal = 0
-      this.plogList = []
+      // this.plogList = []
       this.loadLock = false
       this.getPlogList()
     },
@@ -150,6 +158,9 @@ export const useDataStore = defineStore('dataStore', {
           lastUpdateTime: dayjs(it.lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
         }
       })
+    },
+    async getAssetTypeCount() {
+      this.assetTypeCount = await assetApi.getTypeCount()
     }
   }
 })

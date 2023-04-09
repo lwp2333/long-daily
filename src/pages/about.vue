@@ -1,5 +1,8 @@
 <template>
-  <div class="about-page">不知江月待何人</div>
+  <div class="about-page">
+    <span>不知江月待何人</span>
+    <span class="version">版本:v1.0.0</span>
+  </div>
 </template>
 
 <script setup></script>
@@ -18,5 +21,10 @@
   align-items: center;
   font-size: 20px;
   color: #222;
+  .version {
+    margin-top: 2px;
+    font-size: 14px;
+    color: #888;
+  }
 }
 </style>

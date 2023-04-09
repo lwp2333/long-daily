@@ -26,14 +26,21 @@
         </template>
       </nut-cell>
     </nut-cell-group>
-    <div v-if="imgCacheList.length" class="upload-box">
+    <div v-if="imgCacheList.length" class="img-box">
       <nut-grid :gutter="0" :column-num="3" :border="false">
         <nut-grid-item v-for="(item, index) in imgCacheList" :key="index">
-          <image :src="item.tempFilePath" mode="aspectFill" class="mini_pic" @click="handlePreview(index)" />
+          <div class="img-item" @click="handlePreview(index)">
+            <image :src="item.tempFilePath" mode="aspectFill" class="mini_pic" />
+            <div class="del-icon" @click="handleDelImg(index)">
+              <IconFont name="circle-close" color="#666" />
+            </div>
+          </div>
         </nut-grid-item>
         <nut-grid-item v-if="imgCacheList.length < 9">
-          <div class="add" @click="choosePhotos">
-            <IconFont name="uploader" :size="24" color="#ccc" />
+          <div class="img-item">
+            <div class="add" @click="choosePhotos">
+              <IconFont name="uploader" :size="24" color="#ccc" />
+            </div>
           </div>
         </nut-grid-item>
       </nut-grid>
@@ -48,13 +55,20 @@
             <div class="mask">
               <IconFont name="play-start" :size="12" color="#fff" />
             </div>
+            <div class="del-icon" @click="handleDelVideo(index)">
+              <IconFont name="circle-close" color="#666" />
+            </div>
           </div>
         </nut-grid-item>
       </nut-grid>
     </div>
 
     <div v-if="audioCache" class="audio-box">
-      <RecordPlay :src="audioCache.tempFilePath" />
+      <RecordPlay :src="audioCache.tempFilePath">
+        <div class="del-audio" @click="handleDelAudio">
+          <IconFont name="circle-close" color="#666" />
+        </div>
+      </RecordPlay>
     </div>
 
     <div class="action">
@@ -117,9 +131,7 @@ const choosePhotos = async () => {
     sourceType: ['album', 'camera'],
     count: 9 - imgCacheList.value.length
   })
-  Taro.showLoading({
-    title: '上传中...'
-  })
+  showLoading('上传中...')
   const urlList = await startUploadMutile(res.tempFiles.map(it => it.tempFilePath))
   imgCacheList.value.push(
     ...res.tempFiles.map((it, index) => {
@@ -129,7 +141,11 @@ const choosePhotos = async () => {
       }
     })
   )
-  Taro.hideLoading()
+  hideLoading()
+}
+
+const handleDelImg = (index: number) => {
+  imgCacheList.value.splice(index, 1)
 }
 
 // 预览本地缓存图
@@ -148,9 +164,7 @@ const chooseVideo = async () => {
     sourceType: ['album', 'camera'],
     count: 1
   })
-  Taro.showLoading({
-    title: '上传中...'
-  })
+  showLoading('上传中...')
   const urlList = await startUploadMutile(res.tempFiles.map(it => it.tempFilePath))
   const posterUrlList = await startUploadMutile(res.tempFiles.map(it => it.thumbTempFilePath))
   videoCacheList.value = res.tempFiles.map((it, index) => {
@@ -160,8 +174,13 @@ const chooseVideo = async () => {
       thumbTempFilePath: posterUrlList[index]
     }
   })
-  Taro.hideLoading()
+  hideLoading()
 }
+
+const handleDelVideo = (index: number) => {
+  videoCacheList.value.splice(index, 1)
+}
+
 // 预览本地缓存视频
 const handlePreviewVideo = (index: number) => {
   const url = videoCacheList.value[index].tempFilePath
@@ -183,6 +202,10 @@ const handleRecorderChange = async (record: RecorderItem) => {
   record.tempFilePath = url
   audioCache.value = record
   hideLoading()
+}
+
+const handleDelAudio = () => {
+  audioCache.value = undefined
 }
 
 // 选择相册组
@@ -244,7 +267,7 @@ const openConfirmShow = () => {
   confirmShow.value = true
 }
 
-// 刷新数据 可能影响到的()
+// 刷新数据 可能影响到的(相册 plog)
 const refreshDataAndBack = () => {
   dataStore.getAlbumList()
   dataStore.refreshPlogList()
@@ -252,7 +275,7 @@ const refreshDataAndBack = () => {
 }
 
 const saveConfirm = async () => {
-  showLoading('正在发布...')
+  showLoading('发布中...')
   await plogApi.create(formModel)
   refreshDataAndBack()
   hideLoading()
@@ -323,49 +346,55 @@ const saveConfirm = async () => {
   }
 }
 
-.upload-box {
+.img-box {
   padding: 12px;
   border-radius: 8px;
   background-color: #fff;
-  .add {
+  .img-item {
+    position: relative;
     width: 100%;
-    height: auto;
-    aspect-ratio: 1;
-    border-radius: 4px;
-    background-color: #f6f7f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    &:not(:last-child) {
-      margin-right: 2px;
+    padding: 8px;
+    line-height: 0;
+    .add {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      border-radius: 4px;
+      background-color: #f6f7f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-  }
-  .mini_pic {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1;
+    .mini_pic {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      border-radius: 4px;
+    }
   }
 }
 
 .video-box {
-  margin-top: 8px;
   padding: 12px;
   background-color: #fff;
   .video-item {
     position: relative;
     width: 100%;
+    padding: 8px;
     line-height: 0;
     .video_pic {
       width: 100%;
       height: auto;
       aspect-ratio: 1;
+      border-radius: 4px;
     }
     .mask {
       position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      left: 8px;
+      top: 8px;
+      z-index: 99;
+      width: calc(100% - 16px);
+      height: calc(100% - 16px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -375,8 +404,25 @@ const saveConfirm = async () => {
 }
 
 .audio-box {
+  margin-top: 12px;
   padding: 12px;
   background-color: #fff;
+}
+
+.del-icon {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  z-index: 999;
+  line-height: 0;
+}
+
+.del-audio {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  z-index: 999;
+  line-height: 0;
 }
 
 .action {

@@ -12,7 +12,7 @@
         <div class="item">
           <image :src="item.url" class="mini-pic" mode="aspectFill" />
           <div class="del-icon" @click="selectDel(index)">
-            <IconFont name="circle-close" />
+            <IconFont  name="circle-close" color="#666" />
           </div>
         </div>
       </template>
@@ -113,7 +113,7 @@ const handleDel = () => {
     .del-icon {
       position: absolute;
       top: -2px;
-      right: 0px;
+      right: -2px;
       z-index: 999;
     }
   }

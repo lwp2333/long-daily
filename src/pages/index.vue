@@ -17,7 +17,13 @@
         <img v-else class="gif to-right" id="popid" :src="currentGif" @click="dialogShow = true" />
       </nut-animate>
     </div>
-    <nut-popover v-model:visible="dialogShow" targetId="popid" location="top-start" custom-class="customClass">
+    <nut-popover
+      v-model:visible="dialogShow"
+      targetId="popid"
+      location="top-start"
+      custom-class="customClass"
+      @close="runPet"
+    >
       <template #content>
         <div class="dialog">
           <div class="message">点我干啥呢?</div>

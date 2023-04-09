@@ -19,7 +19,7 @@
             :max-length="12"
             show-word-limit
             :border="false"
-            placeholder="请输入名称"
+            placeholder="请输入清单内容"
           />
         </div>
       </div>
@@ -70,8 +70,8 @@
 
 <script lang="ts" setup>
 import lifeInventoryApi, { CreateLifeInventoryDto, FontSizeEnum, LifeInventoryStatusEnum } from '@/api/lifeInventoryApi'
+import useToast from '@/hooks/useToast'
 import { useDataStore } from '@/store/dataStore'
-import Taro from '@tarojs/taro'
 import { computed, reactive, ref, toRefs, watch } from 'vue'
 
 interface Props {
@@ -90,12 +90,14 @@ const show = computed({
   set: (val: boolean) => emit('update:visible', val)
 })
 
+const { showToast, showLoading, hideLoading } = useToast()
+
 const fontSize = ref<number>(1)
 const formModel = reactive<CreateLifeInventoryDto>({
   name: '',
   status: LifeInventoryStatusEnum.unFinish,
   fontSize: FontSizeEnum.small,
-  color: ''
+  color: 'color-2'
 })
 
 watch(
@@ -122,18 +124,15 @@ watch(
 )
 
 const saveConfirm = async () => {
-  try {
-    await lifeInventoryApi.create(formModel)
-    show.value = false
-    Taro.showToast({
-      title: '保存成功'
-    })
-    dataStore.getLifeInventory()
-  } catch (error) {
-    Taro.showToast({
-      title: '保存失败'
-    })
+  if (!formModel.name) {
+    showToast('请输入清单内容')
+    return
   }
+  showLoading('保存中...')
+  await lifeInventoryApi.create(formModel)
+  show.value = false
+  dataStore.getLifeInventory()
+  hideLoading('保存成功')
 }
 const hanldeClose = () => {
   show.value = false
@@ -175,5 +174,17 @@ const hanldeClose = () => {
 }
 .nut-input {
   padding: 4px;
+}
+.action {
+  position: fixed;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+  background-color: #fff;
+  padding: 16px 8vw;
+  box-shadow: 0 6px 15px rgb(0 0 0 / 20%);
 }
 </style>

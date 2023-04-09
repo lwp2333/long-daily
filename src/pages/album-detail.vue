@@ -5,7 +5,7 @@
         {{ detail.desc }}
       </div>
       <div class="num-info">
-        当前相册共
+        共
         <span class="num">{{ detail.imagesCount }}</span>
         张照片
         <span class="num">{{ detail.videosCount }}</span>
@@ -42,9 +42,11 @@ watchEffect(async () => {
 </script>
 <style lang="scss">
 .albumDetailPage {
+  padding: 4px;
   width: 100%;
   min-height: 100vh;
-  background-color: #fff;
+  background-color: #f6f7f8;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 
 .header {
@@ -54,7 +56,8 @@ watchEffect(async () => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+  background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+  border-radius: 8px;
   color: #fff;
   .desc {
     text-align: center;
@@ -70,12 +73,17 @@ watchEffect(async () => {
   }
 }
 .content {
-  margin-top: 32px;
-  padding: 8px;
+  margin-top: 12px;
   .date-item {
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #fff;
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
     .date {
       margin-left: 8px;
-      font-size: 16px;
+      font-size: 14px;
       color: rgba(0, 0, 0, 0.64);
     }
   }
